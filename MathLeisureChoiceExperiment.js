@@ -54,8 +54,10 @@ var instructions = {
 /*2. Survey Block - Part 1: Leisure Activities*/
 var leisure_survey_page = {
   type: jsPsychSurvey,
+  pages: [[{ type: "text", prompt: "placeholder", name: "placeholder" }]], // required dummy, overwritten in on_start
   title: "Part 1: Leisure Activities",
-  pages: function() {
+  show_question_numbers: "off",
+  on_start: function(trial) {
     var questions = leisure_activities.map(function(activity_string, index) {
       return {
         type: "text",
@@ -65,7 +67,7 @@ var leisure_survey_page = {
         required: false
       };
     });
-    return [jsPsych.randomization.shuffle(questions)];
+    trial.pages = [jsPsych.randomization.shuffle(questions)];
   },
   data: { phase: 'survey_rating_leisure' }
 };
@@ -73,8 +75,10 @@ var leisure_survey_page = {
 /*3. Survey Block - Part 2: Math Tasks*/
 var math_survey_page = {
   type: jsPsychSurvey,
+  pages: [[{ type: "text", prompt: "placeholder", name: "placeholder" }]],
   title: "Part 2: Math Activities",
-  pages: function() {
+  show_question_numbers: "off",
+  on_start: function(trial) {
     var questions = math_assignments.map(function(math, index) {
       return {
         type: "text",
@@ -84,7 +88,7 @@ var math_survey_page = {
         required: false
       };
     });
-    return [jsPsych.randomization.shuffle(questions)];
+    trial.pages = [jsPsych.randomization.shuffle(questions)];
   },
   data: { phase: 'survey_rating_math' }
 };
