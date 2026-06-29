@@ -295,7 +295,7 @@ var choice_task_timeline = {
     // 2. 6 Leisure x 6 Math Tasks x 6 Deadlines = 216 Trials
     for (var i = 0; i < top_activities.length; i++) {       
       for (var j = 0; j < flat_math_tasks.length; j++) {    
-        for (var k = 0; k < deadline_pool.length; k++) {    
+        for (var k = 0; k < deadlines.length; k++) {    
           
           combinations.push({
             leisure: top_activities[i],
@@ -303,7 +303,7 @@ var choice_task_timeline = {
               action: flat_math_tasks[j].action,
               type: flat_math_tasks[j].type,
               weight: flat_math_tasks[j].weight,
-              deadline: deadline_pool[k]
+              deadline: deadlines[k]
             }
           });
           
