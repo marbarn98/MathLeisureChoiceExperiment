@@ -39,19 +39,19 @@ var welcome = {
   stimulus: "Welcome to the experiment. Press any key to begin."
 };
 
-/* 1. set up instructions block*/
+/*1. set up instructions block*/
 var instructions = {
   type: jsPsychHtmlButtonResponse,
   choices: ['OK'],
-  stimulus: "<p>Instructions: First, you will be asked to rate a series of activities based on how enjoyable or unenjoyable you find them.</p>" +
+  stimulus: "<p><b>Instructions:</b> First, you will be asked to rate a series of activities based on how enjoyable or unenjoyable you find them.</p>" +
             "<p>Afterward, you will complete a decision task choosing between these alternatives.</p>" +
-            "<p>If you understand these instructions, click OK.</p>",
+            "<p>If you understand these instructions, click <b>OK.</b></p>",
   allow_keys: false,
   show_clickable_nav: true,
   post_trial_gap: 1000
 };
 
-/* 2. Survey Block - Part 1: Leisure Activities */
+/*2. Survey Block - Part 1: Leisure Activities*/
 var leisure_survey_page = {
   type: jsPsychSurvey,
   survey_json: function() {
@@ -118,7 +118,7 @@ var leisure_survey_page = {
   }
 };
 
-/* 3. Survey Block - Part 2: Math Tasks */
+/*3. Survey Block - Part 2: Math Tasks*/
 var math_survey_page = {
   type: jsPsychSurvey,
   survey_json: function() {
@@ -175,7 +175,7 @@ var math_survey_page = {
   }
 };
 
-/* 4. Data Processing */
+/*4. Data Processing*/
 var process_survey_data = {
   type: jsPsychCallFunction,
   func: function() {
@@ -201,24 +201,48 @@ var process_survey_data = {
   }
 };
 
-/* 5. Dynamic Choice Task */
+/*5. Dynamic Choice Task: Presents Combinations of different Math Tasks with Leisure Options that are most Subjectively Enjoyable to Participant, based on their Ratings*/
+var choice_task_instructions = {
+  type: jsPsychHtmlButtonResponse,
+  choices: ['OK'],
+  stimulus: "<p><b>Instructions:</b> In this task, you will be presented with a choice between two options:</p>" +
+            "<p>           1) A <b>leisure activity</b> that you might find enjoyable on one side of the screen</p>" +
+            "<p>           1) A <b>math task</b> with a specific deadline and worth a percentage of your grade on the other side of the screen.</p>" +
+            "<p>For each choice, use your mouse to choose the <b>leisure activity</b> or the <b>math task</b>.</p>" +
+            "<p>If you understand these instructions, click <b>OK.</b></p>",
+  allow_keys: false,
+  post_trial_gap: 1000
+};
+
 var choice_task_timeline = {
-  timeline: [{
-    type: jsPsychHtmlButtonResponse,
-    stimulus: "<h2>Which would you do:</h2>",
-    choices: function() {
-      var leisure = jsPsych.timelineVariable('leisure');
-      var math = jsPsych.timelineVariable('math');
-      
-      var math_string = `${math.action} ${math.type} worth ${math.weight} of your grade due in ${math.deadline}`;
-      
-      var standard_choices = [leisure, math_string];
-      var shuffled_choices = jsPsych.randomization.shuffle(standard_choices);
-      
-      this.current_left = shuffled_choices;
-      this.current_right = shuffled_choices;
-      
-      return shuffled_choices; 
+  timeline: [
+    {
+      // Presents a break to participants every 36 trials
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: "<p>Take a break if needed, and press the spacebar when you are ready to continue.</p>",
+      choices: [' '],
+      conditional_function: function() {
+        var trials_done = jsPsych.data.get().filter({ phase: '2afc_choice' }).count();
+        return trials_done > 0 && trials_done % 36 === 0;
+      }
+    },
+    {
+      // Trial presentations
+      type: jsPsychHtmlButtonResponse,
+      stimulus: "<h2>Which would you do:</h2>",
+      choices: function() {
+        var leisure = jsPsych.timelineVariable('leisure');
+        var math = jsPsych.timelineVariable('math');
+        
+        var math_string = `${math.action} ${math.type} worth ${math.weight} of your grade due in ${math.deadline}`;
+        
+        var standard_choices = [leisure, math_string];
+        var shuffled_choices = jsPsych.randomization.shuffle(standard_choices);
+        
+        this.current_left = shuffled_choices;
+        this.current_right = shuffled_choices;
+        
+        return shuffled_choices; 
     },
     button_html: '<button class="jspsych-btn" style="width: 320px; min-height: 140px; margin: 20px; font-size: 18px; padding: 15px; white-space: normal;">%choice%</button>',
     data: {
@@ -249,7 +273,7 @@ var choice_task_timeline = {
     var combinations = [];
     var flat_math_tasks = [];
     
-    // 1. Flatten the math array into 6 explicit configurations
+    // 1. Math array: 6 configurations
     math_assignments.forEach(function(item) {
       if (Array.isArray(item.weight)) {
         item.weight.forEach(function(w) {
@@ -268,7 +292,7 @@ var choice_task_timeline = {
       }
     });
 
-    // 2. Full Factorial Design: 6 Leisure x 6 Math Tasks x 6 Deadlines = 216 Trials
+    // 2. 6 Leisure x 6 Math Tasks x 6 Deadlines = 216 Trials
     for (var i = 0; i < top_activities.length; i++) {       
       for (var j = 0; j < flat_math_tasks.length; j++) {    
         for (var k = 0; k < deadline_pool.length; k++) {    
@@ -291,13 +315,14 @@ var choice_task_timeline = {
   }
 };
 
-/*set up experiment structure*/
+/*6. Set Up Experiment Timeline*/
 var timeline = [];
 timeline.push(welcome); // Presents welcome page
-timeline.push(instructions); // Presents instructions
+timeline.push(instructions); // Presents initial instructions
 timeline.push(leisure_survey_page); // Presents leisure activity survey
 timeline.push(math_survey_page); // Presents math activity survey
 timeline.push(process_survey_data);  // Computes top_activities
+timeline.push(choice_task_instructions); // Presents choice task instructions
 timeline.push(choice_task_timeline); // Generates and runs 216 trials
 timeline.push(debrief);
 
