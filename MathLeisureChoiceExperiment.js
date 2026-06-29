@@ -266,7 +266,8 @@ var choice_task_timeline = {
         data.selected_alternative = `${data.math_action} ${data.math_type}`;
       }
     }
-  }],
+  }
+],
 
 // 216-combination loop
   timeline_variables: function() {
