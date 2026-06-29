@@ -217,7 +217,7 @@ var choice_task_instructions = {
 var choice_task_timeline = {
   timeline: [
     {
-      // Presents a break to participants every 36 trials
+      // Present a break to participants every 36 trials
       type: jsPsychHtmlKeyboardResponse,
       stimulus: "<p>Take a break if needed, and press the spacebar when you are ready to continue.</p>",
       choices: [' '],
