@@ -315,7 +315,16 @@ var choice_task_timeline = {
   }
 };
 
-/*6. Set Up Experiment Timeline*/
+/*6. Debrief:*/
+var debrief = {
+  type: jsPsychHtmlKeyboardResponse,
+  choices: ['OK'],
+  stimulus: "<p>Thank you for completing this part of the experiment. Press any key to be redirected for crediting. Thank you!</p>",
+  allow_keys: false,
+  post_trial_gap: 1000
+};
+
+/*7. Set Up Experiment Timeline*/
 var timeline = [];
 timeline.push(welcome); // Presents welcome page
 timeline.push(instructions); // Presents initial instructions
