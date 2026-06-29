@@ -54,119 +54,39 @@ var instructions = {
 /*2. Survey Block - Part 1: Leisure Activities*/
 var leisure_survey_page = {
   type: jsPsychSurvey,
-  survey_json: {
-    showQuestionNumbers: "off",
-    title: "Part 1: Leisure Activities",
-    elements: []  // placeholder
-  },
-  on_start: function(trial) {
-    var elements = leisure_activities.map(function(activity_string, index) {
+  title: "Part 1: Leisure Activities",
+  pages: function() {
+    var questions = leisure_activities.map(function(activity_string, index) {
       return {
         type: "text",
         name: "leisure_" + index,
-        title: activity_string,
-        inputType: "range",
-        min: -5,
-        max: 5,
-        step: 0.01,
-        defaultValue: 0.00,
-        minRateDescription: "Unenjoyable (-5)",
-        midRateDescription: "Neutral (0)",
-        maxRateDescription: "Enjoyable (+5)"
+        prompt: activity_string,
+        input_type: "range",
+        required: false
       };
     });
-    trial.survey_json.elements = jsPsych.randomization.shuffle(elements);
-    trial.survey_json.description = "Instructions: Please rank the following leisure activities and hobbies below, based on how enjoyable or unenjoyable you find them. Some of these activities may not exactly match your preferences, but please try to rate based on how close it is to one of your preferred activities (For example: if you like card games/tabletop games/tile games, then you should rank the <q>Play board games with friends</q> option highly).";
+    return [jsPsych.randomization.shuffle(questions)];
   },
-  data: { phase: 'survey_rating_leisure' },
-  
-  // This step forces participant to move/interact with each slider before they can submit
-  on_load: function() {
-    // 1. Locate the Survey Complete/Submit button
-    var submit_btn = document.querySelector(".sv-btn.sv-footer__complete-btn");
-    if (submit_btn) {
-      submit_btn.disabled = true; // Lock it initially
-      submit_btn.style.opacity = "0.5";
-    }
-
-    // 2. Find all range inputs (the sliders) on the page
-    var sliders = document.querySelectorAll("input[type='range']");
-    var total_sliders = sliders.length;
-    var interacted_sliders = new Set(); // Tracks unique sliders moved
-
-    // 3. Attach an input listener to every slider on the screen
-    sliders.forEach(function(slider, index) {
-      // Add a unique identifier tag to each HTML slider element
-      slider.setAttribute("data-slider-idx", index);
-
-      slider.addEventListener("input", function(e) {
-        var idx = e.target.getAttribute("data-slider-idx");
-        interacted_sliders.add(idx); // Log that this specific slider was adjusted
-
-        // 4. If the user has moved/interacted with all sliders, then unlock the submit button
-        if (interacted_sliders.size === total_sliders) {
-          if (submit_btn) {
-            submit_btn.disabled = false;
-            submit_btn.style.opacity = "1";
-          }
-        }
-      });
-    });
-  }
+  data: { phase: 'survey_rating_leisure' }
 };
 
 /*3. Survey Block - Part 2: Math Tasks*/
 var math_survey_page = {
   type: jsPsychSurvey,
-  survey_json: {
-    showQuestionNumbers: "off",
-    title: "Part 2: Math Activities",
-    elements: []
-  },
-  on_start: function(trial) {
-    var elements = math_assignments.map(function(math, index) {
+  title: "Part 2: Math Activities",
+  pages: function() {
+    var questions = math_assignments.map(function(math, index) {
       return {
         type: "text",
         name: "math_" + index,
-        title: `${math.action} ${math.type}`,
-        inputType: "range",
-        min: -5,
-        max: 5,
-        step: 0.01,
-        defaultValue: 0.00,
-        minRateDescription: "Unenjoyable (-5)",
-        midRateDescription: "Neutral (0)",
-        maxRateDescription: "Enjoyable (+5)"
+        prompt: `${math.action} ${math.type}`,
+        input_type: "range",
+        required: false
       };
     });
-    trial.survey_json.elements = jsPsych.randomization.shuffle(elements);
-    trial.survey_json.description = "Instructions: Please rank the following math activities below, based on how enjoyable or unenjoyable you find them.";
+    return [jsPsych.randomization.shuffle(questions)];
   },
-  data: { phase: 'survey_rating_math' },
-  on_load: function() {
-    var submit_btn = document.querySelector(".sv-btn.sv-footer__complete-btn");
-    if (submit_btn) {
-      submit_btn.disabled = true;
-      submit_btn.style.opacity = "0.5";
-    }
-    var sliders = document.querySelectorAll("input[type='range']");
-    var total_sliders = sliders.length;
-    var interacted_sliders = new Set();
-
-    sliders.forEach(function(slider, index) {
-      slider.setAttribute("data-slider-idx", index);
-      slider.addEventListener("input", function(e) {
-        var idx = e.target.getAttribute("data-slider-idx");
-        interacted_sliders.add(idx);
-        if (interacted_sliders.size === total_sliders) {
-          if (submit_btn) {
-            submit_btn.disabled = false;
-            submit_btn.style.opacity = "1";
-          }
-        }
-      });
-    });
-  }
+  data: { phase: 'survey_rating_math' }
 };
 
 /*4. Data Processing*/
