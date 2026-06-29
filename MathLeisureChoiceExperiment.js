@@ -54,7 +54,12 @@ var instructions = {
 /*2. Survey Block - Part 1: Leisure Activities*/
 var leisure_survey_page = {
   type: jsPsychSurvey,
-  survey_json: function() {
+  survey_json: {
+    showQuestionNumbers: "off",
+    title: "Part 1: Leisure Activities",
+    elements: []  // placeholder
+  },
+  on_start: function(trial) {
     var elements = leisure_activities.map(function(activity_string, index) {
       return {
         type: "text",
@@ -70,16 +75,8 @@ var leisure_survey_page = {
         maxRateDescription: "Enjoyable (+5)"
       };
     });
-
-    var shuffled_elements = jsPsych.randomization.shuffle(elements);
-
-    return {
-      showQuestionNumbers: "off",
-      title: "Part 1: Leisure Activities",
-      // Custom structured instructions written specifically for leisure activities
-      description: "Instructions: Please rank the following leisure activities and hobbies below, based on how enjoyable or unenjoyable you find them. Some of these activities may not exactly match your preferences, but please try to rate based on how close it is to one of your preferred activities (For example: if you like card games/tabletop games/tile games, then you should rank the <q>Play board games with friends</q> option highly).",
-      elements: shuffled_elements
-    };
+    trial.survey_json.elements = jsPsych.randomization.shuffle(elements);
+    trial.survey_json.description = "Instructions: Please rank the following leisure activities and hobbies below, based on how enjoyable or unenjoyable you find them. Some of these activities may not exactly match your preferences, but please try to rate based on how close it is to one of your preferred activities (For example: if you like card games/tabletop games/tile games, then you should rank the <q>Play board games with friends</q> option highly).";
   },
   data: { phase: 'survey_rating_leisure' },
   
@@ -121,7 +118,12 @@ var leisure_survey_page = {
 /*3. Survey Block - Part 2: Math Tasks*/
 var math_survey_page = {
   type: jsPsychSurvey,
-  survey_json: function() {
+  survey_json: {
+    showQuestionNumbers: "off",
+    title: "Part 2: Math Activities",
+    elements: []
+  },
+  on_start: function(trial) {
     var elements = math_assignments.map(function(math, index) {
       return {
         type: "text",
@@ -137,16 +139,8 @@ var math_survey_page = {
         maxRateDescription: "Enjoyable (+5)"
       };
     });
-
-    var shuffled_elements = jsPsych.randomization.shuffle(elements);
-
-    return {
-      showQuestionNumbers: "off",
-      title: "Part 2: Math Activities",
-      // Custom structured instructions written specifically for math activities
-      description: "Instructions: Please rank the following math activities below, based on how enjoyable or unenjoyable you find them.",
-      elements: shuffled_elements
-    };
+    trial.survey_json.elements = jsPsych.randomization.shuffle(elements);
+    trial.survey_json.description = "Instructions: Please rank the following math activities below, based on how enjoyable or unenjoyable you find them.";
   },
   data: { phase: 'survey_rating_math' },
   on_load: function() {
