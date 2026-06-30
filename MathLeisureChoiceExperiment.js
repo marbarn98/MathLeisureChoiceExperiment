@@ -54,43 +54,113 @@ var instructions = {
 /*2. Survey Block - Part 1: Leisure Activities*/
 var leisure_survey_page = {
   type: jsPsychSurvey,
-  pages: [[{ type: "text", prompt: "placeholder", name: "placeholder" }]], // required dummy, overwritten in on_start
-  title: "Part 1: Leisure Activities",
+  pages: [[{ type: "text", prompt: "placeholder", name: "placeholder" }]],
+  title: "Part 1: Leisure Activities<br><p style='font-size:0.9em; font-weight:normal;'><b>Instructions:</b> Please rate the following leisure activities and hobbies below, based on how enjoyable or unenjoyable you find them. Some of these activities may not exactly match your preferences, but please try to rate based on how close it is to one of your preferred activities (For example: if you like card games/tabletop games/tile games, then you should rate the <q>Play board games with friends</q> option highly).</p>",
   show_question_numbers: "off",
   on_start: function(trial) {
     var questions = leisure_activities.map(function(activity_string, index) {
       return {
         type: "text",
         name: "leisure_" + index,
-        prompt: activity_string,
+        prompt: activity_string + 
+          '<br><div style="display:flex; justify-content:space-between; font-size:0.85em; color:#333; margin-top:4px;">' +
+          '<span>Unenjoyable (-5)</span><span>Neutral (0)</span><span>Enjoyable (+5)</span></div>',
         input_type: "range",
         required: false
       };
     });
     trial.pages = [jsPsych.randomization.shuffle(questions)];
   },
-  data: { phase: 'survey_rating_leisure' }
+  data: { phase: 'survey_rating_leisure' },
+  on_load: function() {
+    // Set min, max, step, defaultValue on all sliders
+    var sliders = document.querySelectorAll("input[type='range']");
+    sliders.forEach(function(slider) {
+      slider.min = -5;
+      slider.max = 5;
+      slider.step = 0.01;
+      slider.value = 0;
+    });
+
+    // Lock submit button until all sliders are interacted with
+    var submit_btn = document.querySelector(".sv-btn.sv-footer__complete-btn");
+    if (submit_btn) {
+      submit_btn.disabled = true;
+      submit_btn.style.opacity = "0.5";
+    }
+
+    var total_sliders = sliders.length;
+    var interacted_sliders = new Set();
+
+    sliders.forEach(function(slider, index) {
+      slider.setAttribute("data-slider-idx", index);
+      slider.addEventListener("input", function(e) {
+        var idx = e.target.getAttribute("data-slider-idx");
+        interacted_sliders.add(idx);
+        if (interacted_sliders.size === total_sliders) {
+          if (submit_btn) {
+            submit_btn.disabled = false;
+            submit_btn.style.opacity = "1";
+          }
+        }
+      });
+    });
+  }
 };
 
 /*3. Survey Block - Part 2: Math Tasks*/
 var math_survey_page = {
   type: jsPsychSurvey,
   pages: [[{ type: "text", prompt: "placeholder", name: "placeholder" }]],
-  title: "Part 2: Math Activities",
+  title: "Part 2: Math Activities<br><p style='font-size:0.9em; font-weight:normal;'><b>Instructions:</b> Please rate the following math activities below, based on how enjoyable or unenjoyable you find them.</p>",
   show_question_numbers: "off",
   on_start: function(trial) {
     var questions = math_assignments.map(function(math, index) {
       return {
         type: "text",
         name: "math_" + index,
-        prompt: `${math.action} ${math.type}`,
+        prompt: `${math.action} ${math.type}` +
+          '<br><div style="display:flex; justify-content:space-between; font-size:0.85em; color:#333; margin-top:4px;">' +
+          '<span>Unenjoyable (-5)</span><span>Neutral (0)</span><span>Enjoyable (+5)</span></div>',
         input_type: "range",
         required: false
       };
     });
     trial.pages = [jsPsych.randomization.shuffle(questions)];
   },
-  data: { phase: 'survey_rating_math' }
+  data: { phase: 'survey_rating_math' },
+  on_load: function() {
+    var sliders = document.querySelectorAll("input[type='range']");
+    sliders.forEach(function(slider) {
+      slider.min = -5;
+      slider.max = 5;
+      slider.step = 0.01;
+      slider.value = 0;
+    });
+
+    var submit_btn = document.querySelector(".sv-btn.sv-footer__complete-btn");
+    if (submit_btn) {
+      submit_btn.disabled = true;
+      submit_btn.style.opacity = "0.5";
+    }
+
+    var total_sliders = sliders.length;
+    var interacted_sliders = new Set();
+
+    sliders.forEach(function(slider, index) {
+      slider.setAttribute("data-slider-idx", index);
+      slider.addEventListener("input", function(e) {
+        var idx = e.target.getAttribute("data-slider-idx");
+        interacted_sliders.add(idx);
+        if (interacted_sliders.size === total_sliders) {
+          if (submit_btn) {
+            submit_btn.disabled = false;
+            submit_btn.style.opacity = "1";
+          }
+        }
+      });
+    });
+  }
 };
 
 /*4. Data Processing*/
