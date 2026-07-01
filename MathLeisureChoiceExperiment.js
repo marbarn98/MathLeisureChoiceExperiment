@@ -101,7 +101,7 @@ var leisure_survey_page = {
     });
 
     // Lock submit button until all sliders are interacted with
-    var submit_btn = document.querySelector(".sv-btn.sv-footer__complete-btn, .sv_complete_btn"");
+    var submit_btn = document.querySelector(".sv-btn.sv-footer__complete-btn, .sv_complete_btn");
     if (submit_btn) {
       submit_btn.disabled = true;
       submit_btn.style.opacity = "0.5";
@@ -176,7 +176,7 @@ var math_survey_page = {
     });
 
     // Lock submit button until all sliders are interacted with
-    var submit_btn = document.querySelector(".sv-btn.sv-footer__complete-btn, .sv_complete_btn"");
+    var submit_btn = document.querySelector(".sv-btn.sv-footer__complete-btn, .sv_complete_btn");
     if (submit_btn) {
       submit_btn.disabled = true;
       submit_btn.style.opacity = "0.5";
