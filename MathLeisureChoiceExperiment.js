@@ -77,12 +77,34 @@ var leisure_survey_page = {
         var styleEl = document.createElement("style");
         styleEl.id = "custom-survey-overrides";
         styleEl.innerHTML = `
+            // Make survey title black text
+            .sv_header h3, .sv-title, .sv-header__title, h3.sv_title {
+                color: #000000 !important;
+            }
+    
             #leisure-desc { font-size: 1.05em !important; font-weight: normal !important; text-align: left !important; margin: 15px 20px !important; display: block !important; }
             .sv-question, .sv_q { padding-top: 25px !important; padding-bottom: 25px !important; }
             .sv-question__title, .sv_q_title, .sv-string-viewer { font-size: 1.25em !important; font-weight: 600 !important; color: #222 !important; text-align: center !important; display: block !important; margin-bottom: 12px !important; }
             input[type='range'] { width: 100% !important; max-width: 500px !important; display: block !important; margin: 0 auto !important; }
             .slider-labels { display: flex !important; justify-content: space-between !important; font-size: 0.88em !important; color: #666 !important; margin: 8px auto 0 auto !important; width: 100% !important; max-width: 500px !important; padding: 0 4px !important; box-sizing: border-box !important; }
-            .sv-footer, .sv-action-bar { display: flex !important; justify-content: center !important; width: 100% !important; padding: 25px 0 !important; }
+            
+            // Overhaul all possible footer/navigation wrappers to make sure finish button is centered //
+            .sv-footer, .sv-action-bar, .sv_nav, .sv-footer__container { 
+                display: flex !important; 
+                justify-content: center !important; 
+                align-items: center !important;
+                float: none !important;
+                text-align: center !important;
+                width: 100% !important; 
+                padding: 25px 0 !important; 
+            }
+            
+            // Make sure inner flexbox alignments built into SurveyJS elements do not force button to go to the right //
+            .sv-footer__right, .sv-action-bar--right {
+                float: none !important;
+                margin: 0 auto !important;
+            }
+    
             .sv-btn.sv-footer__complete-btn, .sv_complete_btn { display: inline-block !important; padding: 14px 50px !important; font-size: 1.15em !important; font-weight: bold !important; color: #fff !important; border: none !important; border-radius: 6px !important; cursor: pointer !important; transition: all 0.2s ease !important; box-shadow: 0 3px 6px rgba(0,0,0,0.1) !important; }
             .btn-locked { background-color: #a0a0a0 !important; opacity: 0.85 !important; }
             .btn-unlocked { background-color: #007bff !important; box-shadow: 0 4px 12px rgba(0,123,255,0.35) !important; opacity: 1.0 !important; }
