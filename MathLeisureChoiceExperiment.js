@@ -77,7 +77,7 @@ var leisure_survey_page = {
         var styleEl = document.createElement("style");
         styleEl.id = "custom-survey-overrides";
         styleEl.innerHTML = `
-            // Make survey title black text
+            /* Make survey title black text */
             .sv_header h3, .sv-title, .sv-header__title, h3.sv_title {
                 color: #000000 !important;
             }
@@ -88,7 +88,7 @@ var leisure_survey_page = {
             input[type='range'] { width: 100% !important; max-width: 500px !important; display: block !important; margin: 0 auto !important; }
             .slider-labels { display: flex !important; justify-content: space-between !important; font-size: 0.88em !important; color: #666 !important; margin: 8px auto 0 auto !important; width: 100% !important; max-width: 500px !important; padding: 0 4px !important; box-sizing: border-box !important; }
             
-            // Overhaul all possible footer/navigation wrappers to make sure finish button is centered 
+            /* Overhaul all possible footer/navigation wrappers to make sure finish button is centered */
             .sv-footer, .sv-action-bar, .sv_nav, .sv-footer__container, .sv-footer__right, .sv-action-bar--right { 
                 display: flex !important; 
                 justify-content: center !important; 
@@ -100,7 +100,7 @@ var leisure_survey_page = {
                 padding: 25px 0 !important; 
             }
             
-            // Make sure inner flexbox alignments built into SurveyJS elements do not force button to go to the right 
+            /* Make sure inner flexbox alignments built into SurveyJS elements do not force button to go to the right */
             .sv-footer__right, .sv-action-bar--right {
                 float: none !important;
                 margin: 0 auto !important;
@@ -198,50 +198,10 @@ var leisure_survey_page = {
                       // Change the button color from grey to blue
                       submit_btn.classList.remove("btn-locked");
                       submit_btn.classList.add("btn-unlocked"); 
-                  } 
-              } 
+                  } // closes if (submit_btn)
+              } // closes if (interacted_sliders.size...)
           }); // closes addEventListener
       }); // closes sliders.forEach
-
-      // Lock submit button logic until all sliders interacted with 
-      var total_sliders = sliders.length;
-      var interacted_sliders = new Set();
-      var forms_completed = false;
-
-      // Custom validation check on the finish button click event
-      if (submit_btn) {
-        // Remove any old custom listeners to prevent duplication
-        var new_submit = submit_btn.cloneNode(true);
-        submit_btn.parentNode.replaceChild(new_submit, submit_btn);
-        submit_btn = new_submit;
-
-        submit_btn.addEventListener("click", function(e) {
-          if (!forms_completed) {
-            // Prevent form submission if not all forms (aka sliders) completed
-            e.preventDefault();
-            e.stopPropagation();
-            // Display browser warning popup window
-            alert("All responses are required. Please interact with every slider on the page before clicking Finish.");
-          }
-        });
-      }
-  
-      sliders.forEach(function(slider, index) {
-        slider.setAttribute("data-slider-idx", index);
-        slider.addEventListener("input", function(e) {
-          var idx = e.target.getAttribute("data-slider-idx");
-          interacted_sliders.add(idx);
-
-          // If all sliders interacted with, then unlock form to go to next page
-          if (interacted_sliders.size === total_sliders) {
-            forms_completed = true;
-            if (submit_btn) {
-              submit_btn.classList.remove("btn-locked");
-              submit_btn.classList.add("btn-unlocked");  // Visual cue that it's clickable; Changes from grey to blue when unlocked
-            }  // closes if (submit_btn)
-          }    // closes if (interacted_sliders.size...)
-        });    // closes addEventListener
-      });      // closes sliders.forEach
     }, 100);   // closes setTimeout; small delay, should let Knockout finish rendering
   }            // closes on_load: function()
 };             // closes leisure_survey_page
