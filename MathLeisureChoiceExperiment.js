@@ -263,15 +263,11 @@ var choice_task_timeline = {
       choices: function() {
         var leisure = jsPsych.timelineVariable('leisure');
         var math = jsPsych.timelineVariable('math');
-        
         var math_string = `${math.action} ${math.type} worth ${math.weight} of your grade due in ${math.deadline}`;
-        
         var standard_choices = [leisure, math_string];
         var shuffled_choices = jsPsych.randomization.shuffle(standard_choices);
-        
         this.current_left = shuffled_choices;
         this.current_right = shuffled_choices;
-        
         return shuffled_choices; 
     },
     button_html: '<button class="jspsych-btn" style="width: 320px; min-height: 140px; margin: 20px; font-size: 18px; padding: 15px; white-space: normal;">%choice%</button>',
@@ -287,7 +283,6 @@ var choice_task_timeline = {
     },
     on_finish: function(data) {
       var chosen_text = (data.response === 0) ? data.button_left_text : data.button_right_text;
-      
       if (chosen_text === data.leisure_option) {
         data.choice_category = 'leisure';
         data.selected_alternative = data.leisure_option;
