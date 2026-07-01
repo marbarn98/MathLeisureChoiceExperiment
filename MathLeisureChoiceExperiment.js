@@ -55,16 +55,14 @@ var instructions = {
 var leisure_survey_page = {
   type: jsPsychSurvey,
   pages: [[{ type: "text", prompt: "placeholder", name: "placeholder" }]],
-  title: "Part 1: Leisure Activities<br><p style='font-size:0.9em; font-weight:normal;'><b>Instructions:</b> Please rate the following leisure activities and hobbies below, based on how enjoyable or unenjoyable you find them. Some of these activities may not exactly match your preferences, but please try to rate based on how close it is to one of your preferred activities (For example: if you like card games/tabletop games/tile games, then you should rate the <q>Play board games with friends</q> option highly).</p>",
+  title: "Part 1: Leisure Activities",
   show_question_numbers: "off",
   on_start: function(trial) {
     var questions = leisure_activities.map(function(activity_string, index) {
       return {
         type: "text",
         name: "leisure_" + index,
-        prompt: activity_string + 
-          '<br><div style="display:flex; justify-content:space-between; font-size:0.85em; color:#333; margin-top:4px;">' +
-          '<span>Unenjoyable (-5)</span><span>Neutral (0)</span><span>Enjoyable (+5)</span></div>',
+        prompt: activity_string,
         input_type: "range",
         required: false
       };
@@ -73,6 +71,16 @@ var leisure_survey_page = {
   },
   data: { phase: 'survey_rating_leisure' },
   on_load: function() {
+    // Description that goes below title
+    var title_el = document.querySelector(".sv-title");
+    if (title_el) {
+      var desc = document.createElement("p");
+      desc.style.fontSize = "0.9em";
+      desc.style.fontWeight = "normal";
+      desc.innerHTML = "<b>Instructions:</b> Please rate the following leisure activities and hobbies below, based on how enjoyable or unenjoyable you find them. Some of these activities may not exactly match your preferences, but please try to rate based on how close it is to one of your preferred activities (For example: if you like card games/tabletop games/tile games, then you should rate the <q>Play board games with friends</q> option highly).</p>"
+      title_el.parentNode.insertBefore(desc, title_el.nextSibling);
+    }
+    
     // Set min, max, step, defaultValue on all sliders
     var sliders = document.querySelectorAll("input[type='range']");
     sliders.forEach(function(slider) {
@@ -80,6 +88,12 @@ var leisure_survey_page = {
       slider.max = 5;
       slider.step = 0.01;
       slider.value = 0;
+
+      // Add min/max labels under each slider
+      var labels = document.createElement("div");
+      labels.style.cssText = "display:flex; justify-content:space-between; font-size:0.85em; color:#333; margin-top:4px;";
+      labels.innerHTML = "<span>Unenjoyable (-5)</span><span>Neutral (0)</span><span>Enjoyable (+5)</span>";
+      slider.parentNode.insertBefore(labels, slider.nextSibling);
     });
 
     // Lock submit button until all sliders are interacted with
@@ -112,16 +126,14 @@ var leisure_survey_page = {
 var math_survey_page = {
   type: jsPsychSurvey,
   pages: [[{ type: "text", prompt: "placeholder", name: "placeholder" }]],
-  title: "Part 2: Math Activities<br><p style='font-size:0.9em; font-weight:normal;'><b>Instructions:</b> Please rate the following math activities below, based on how enjoyable or unenjoyable you find them.</p>",
+  title: "Part 2: Math Activities",
   show_question_numbers: "off",
   on_start: function(trial) {
     var questions = math_assignments.map(function(math, index) {
       return {
         type: "text",
         name: "math_" + index,
-        prompt: `${math.action} ${math.type}` +
-          '<br><div style="display:flex; justify-content:space-between; font-size:0.85em; color:#333; margin-top:4px;">' +
-          '<span>Unenjoyable (-5)</span><span>Neutral (0)</span><span>Enjoyable (+5)</span></div>',
+        prompt: `${math.action} ${math.type}`,
         input_type: "range",
         required: false
       };
@@ -130,14 +142,32 @@ var math_survey_page = {
   },
   data: { phase: 'survey_rating_math' },
   on_load: function() {
+    // Description that does below title
+    var title_el = document.querySelector(".sv-title");
+    if (title_el) {
+      var desc = document.createElement("p");
+      desc.style.fontSize = "0.9em";
+      desc.style.fontWeight = "normal";
+      desc.innerHTML = "<b>Instructions:</b> Please rate the following math activities below, based on how enjoyable or unenjoyable you find them.</p>"
+      title_el.parentNode.insertBefore(desc, title_el.nextSibling);
+    }
+
+    // Set min, max, step, defaultValue on all sliders
     var sliders = document.querySelectorAll("input[type='range']");
     sliders.forEach(function(slider) {
       slider.min = -5;
       slider.max = 5;
       slider.step = 0.01;
       slider.value = 0;
+
+      // Add min/max labels under each slider
+      var labels = document.createElement("div");
+      labels.style.cssText = "display:flex; justify-content:space-between; font-size:0.85em; color:#333; margin-top:4px;";
+      labels.innerHTML = "<span>Unenjoyable (-5)</span><span>Neutral (0)</span><span>Enjoyable (+5)</span>";
+      slider.parentNode.insertBefore(labels, slider.nextSibling);
     });
 
+    // Lock submit button until all sliders are interacted with
     var submit_btn = document.querySelector(".sv-btn.sv-footer__complete-btn");
     if (submit_btn) {
       submit_btn.disabled = true;
