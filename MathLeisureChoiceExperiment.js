@@ -77,7 +77,7 @@ var leisure_survey_page = {
       if (title_el && !document.querySelector("#leisure-desc")) {
         var desc = document.createElement("p");
         desc.id = "leisure-desc";
-        desc.style.cssText = "font-size:0.9em; font-weight:normal; margin: 10px 20px;";
+        desc.style.cssText = "font-size:0.9em; font-weight:normal; margin: 10px 20px; line-height: 1.4;";
         desc.innerHTML = "<b>Instructions:</b> Please rate the following leisure activities and hobbies below, based on how enjoyable or unenjoyable you find them. Some of these activities may not exactly match your preferences, but please try to rate based on how close it is to one of your preferred activities (For example: if you like card games/tabletop games/tile games, then you should rate the 'Play board games with friends' option highly).";
         title_el.parentNode.insertBefore(desc, title_el.nextSibling);
       }
@@ -90,12 +90,15 @@ var leisure_survey_page = {
         slider.setAttribute("step", "0.01");
         slider.setAttribute("value", "0");
         slider.value = "0";
+
+        // Make slider wider but still clean and usable
+        slider.style.cssText = "width: 100%; max-width: 500px; display: block; margin: 0 auto;";
   
-        // Add min/max labels under each slider
+        // Add min/max labels under each slider (should match 500px slider max width
         if (!slider.nextSibling || !slider.nextSibling.classList || !slider.nextSibling.classList.contains("slider-labels")) {
           var labels = document.createElement("div");
           labels.className = "slider-labels";
-          labels.style.cssText = "display:flex; justify-content:space-between; font-size:0.85em; color:#333; margin-top:4px; padding: 0 2px;";
+          labels.style.cssText = "display:flex; justify-content:space-between; font-size:0.85em; color:#333; margin: 6px auto 15px auto; width: 100%; max-width: 500px; padding: 0 5px; box-sizing: border-box;";
           labels.innerHTML = "<span>Unenjoyable (-5)</span><span>Neutral (0)</span><span>Enjoyable (+5)</span>";
           slider.parentNode.insertBefore(labels, slider.nextSibling);
         }
@@ -105,9 +108,18 @@ var leisure_survey_page = {
       var submit_btn = document.querySelector(".sv-btn.sv-footer__complete-btn, .sv_complete_btn");
       if (submit_btn) {
         submit_btn.disabled = true;
-        submit_btn.style.opacity = "0.5";
-      }
-  
+            
+            // Centering wrapper styling
+            var btn_container = submit_btn.parentNode;
+            if (btn_container) {
+                btn_container.style.cssText = "display: flex; justify-content: center; width: 100%; padding: 20px 0;";
+            }
+
+            // Button styling
+            submit_btn.style.cssText = "display: inline-block; padding: 14px 36px; font-size: 1.1em; font-weight: bold; color: #fff; background-color: #007bff; border: none; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; opacity: 0.5; box-shadow: 0 4px 6px rgba(0,0,0,0.1);";
+        }
+
+      // Lock submit button logic until all sliders interacted with 
       var total_sliders = sliders.length;
       var interacted_sliders = new Set();
   
@@ -120,6 +132,7 @@ var leisure_survey_page = {
             if (submit_btn) {
               submit_btn.disabled = false;
               submit_btn.style.opacity = "1";
+              submit_btn.style.backgroundColor = "#28a745"; // Visual cue that it's clickable; Changes to green when unlocked
             }  // closes if (submit_btn)
           }    // closes if (interacted_sliders.size...)
         });    // closes addEventListener
