@@ -78,7 +78,7 @@ var leisure_survey_page = {
         var desc = document.createElement("p");
         desc.id = "leisure-desc";
         desc.style.cssText = "font-size:0.9em; font-weight:normal; margin: 10px 20px;";
-        desc.innerHTML = "<b>Instructions:</b> Please rate the following leisure activities and hobbies below, based on how enjoyable or unenjoyable you find them. Some of these activities may not exactly match your preferences, but please try to rate based on how close it is to one of your preferred activities (For example: if you like card games/tabletop games/tile games, then you should rate the 'Play board games with friends' option highly).</p>";
+        desc.innerHTML = "<b>Instructions:</b> Please rate the following leisure activities and hobbies below, based on how enjoyable or unenjoyable you find them. Some of these activities may not exactly match your preferences, but please try to rate based on how close it is to one of your preferred activities (For example: if you like card games/tabletop games/tile games, then you should rate the 'Play board games with friends' option highly).";
         title_el.parentNode.insertBefore(desc, title_el.nextSibling);
       }
     
@@ -155,7 +155,7 @@ var math_survey_page = {
         var desc = document.createElement("p");
         desc.id = "leisure-desc";
         desc.style.cssText = "font-size:0.9em; font-weight:normal; margin: 10px 20px;";
-        desc.innerHTML = "<b>Instructions:</b> Please rate the following math activities below, based on how enjoyable or unenjoyable you find them.</p>";
+        desc.innerHTML = "<b>Instructions:</b> Please rate the following math activities below, based on how enjoyable or unenjoyable you find them.";
         title_el.parentNode.insertBefore(desc, title_el.nextSibling);
       }
       
