@@ -88,18 +88,19 @@ var leisure_survey_page = {
             input[type='range'] { width: 100% !important; max-width: 500px !important; display: block !important; margin: 0 auto !important; }
             .slider-labels { display: flex !important; justify-content: space-between !important; font-size: 0.88em !important; color: #666 !important; margin: 8px auto 0 auto !important; width: 100% !important; max-width: 500px !important; padding: 0 4px !important; box-sizing: border-box !important; }
             
-            // Overhaul all possible footer/navigation wrappers to make sure finish button is centered //
-            .sv-footer, .sv-action-bar, .sv_nav, .sv-footer__container { 
+            // Overhaul all possible footer/navigation wrappers to make sure finish button is centered 
+            .sv-footer, .sv-action-bar, .sv_nav, .sv-footer__container, .sv-footer__right, .sv-action-bar--right { 
                 display: flex !important; 
                 justify-content: center !important; 
                 align-items: center !important;
                 float: none !important;
                 text-align: center !important;
+                margin: 0 auto !important;
                 width: 100% !important; 
                 padding: 25px 0 !important; 
             }
             
-            // Make sure inner flexbox alignments built into SurveyJS elements do not force button to go to the right //
+            // Make sure inner flexbox alignments built into SurveyJS elements do not force button to go to the right 
             .sv-footer__right, .sv-action-bar--right {
                 float: none !important;
                 margin: 0 auto !important;
@@ -167,30 +168,40 @@ var leisure_survey_page = {
       var interacted_sliders = new Set();
       var forms_completed = false; // Tracks if all sliders are done
       
-      if (submit_btn) {
-        // Keep button active to track clicks, apply grey, and add warning popup if try to proceed without interacting with all the sliders
-        submit_btn.disabled = false; 
-        submit_btn.classList.add("btn-locked"); 
-        
-        // Force button to keep being centered
-        var btn_container = submit_btn.parentNode;
-        if (btn_container) {
-            btn_container.style.setProperty("display", "flex", "important");
-            btn_container.style.setProperty("justify-content", "center", "important");
-            btn_container.style.setProperty("width", "100%", "important");
-            btn_container.style.setProperty("float", "none", "important");
-        }
+      if (submit_btn) { 
+          // Keep the button clickable so we can catch early clicks
+          submit_btn.disabled = false; 
+          submit_btn.classList.add("btn-locked"); 
+          
+          // Check if the user is allowed to finish when they click the button
+          submit_btn.addEventListener("click", function(e) {
+              if (!forms_completed) {
+                  // Stop the form from submitting and show the warning popup
+                  e.preventDefault();
+                  alert("All responses are required. Please interact with every slider on the page before clicking Finish.");
+              }
+              // Fix: Removed stopPropagation so jsPsych can read the click when forms_completed is true!
+          }); 
+      } 
 
-        // Check if allowed to finish when clicking button
-        submit_btn.addEventListener("click", function(e) {
-          if (!forms_completed) {
-              // Stop form from submitting and show the warning popup if incomplete
-              e.preventDefault();
-              e.stopPropagation();
-              alert("All responses are required. Please interact with every slider on the page before clicking Finish.");
-        }
-    });
-  }
+      // 4. Watch the sliders to see when the user moves them
+      sliders.forEach(function(slider, index) { 
+          slider.setAttribute("data-slider-idx", index); 
+          slider.addEventListener("input", function(e) { 
+              var idx = e.target.getAttribute("data-slider-idx"); 
+              interacted_sliders.add(idx); 
+              
+              // If every single slider has been moved, unlock the page
+              if (interacted_sliders.size === total_sliders) { 
+                  forms_completed = true; 
+                  if (submit_btn) { 
+                      // Change the button color from grey to blue
+                      submit_btn.classList.remove("btn-locked");
+                      submit_btn.classList.add("btn-unlocked"); 
+                  } 
+              } 
+          }); // closes addEventListener
+      }); // closes sliders.forEach
 
       // Lock submit button logic until all sliders interacted with 
       var total_sliders = sliders.length;
