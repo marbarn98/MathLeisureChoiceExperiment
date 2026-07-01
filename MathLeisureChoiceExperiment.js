@@ -176,12 +176,13 @@ var leisure_survey_page = {
           // Check if the user is allowed to finish when they click the button
           submit_btn.addEventListener("click", function(e) {
               if (!forms_completed) {
-                  // Stop the form from submitting and show the warning popup
+                  // Stop both the browser submit and any framework automation; show the warning popup 
                   e.preventDefault();
+                  e.stopPropagation();
                   alert("All responses are required. Please interact with every slider on the page before clicking Finish.");
+                  return false; // Tells framework to stop all actions and don't change page
               }
-              // Fix: Removed stopPropagation so jsPsych can read the click when forms_completed is true!
-          }); 
+          }, true); // "True" catches the click before SurveyJS can process it. Intercepts mouse click before SurveyJS registers the button click.
       } 
 
       // 4. Watch the sliders to see when the user moves them
