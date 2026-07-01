@@ -71,6 +71,25 @@ var leisure_survey_page = {
   },
   data: { phase: 'survey_rating_leisure' },
   on_load: function() {
+
+    // Global CSS overrides to fix layouts and button alignment
+    if (!document.getElementById("custom-survey-overrides")) {
+        var styleEl = document.createElement("style");
+        styleEl.id = "custom-survey-overrides";
+        styleEl.innerHTML = `
+            #leisure-desc { font-size: 1.05em !important; font-weight: normal !important; text-align: left !important; margin: 15px 20px !important; display: block !important; }
+            .sv-question, .sv_q { padding-top: 25px !important; padding-bottom: 25px !important; }
+            .sv-question__title, .sv_q_title, .sv-string-viewer { font-size: 1.25em !important; font-weight: 600 !important; color: #222 !important; text-align: center !important; display: block !important; margin-bottom: 12px !important; }
+            input[type='range'] { width: 100% !important; max-width: 500px !important; display: block !important; margin: 0 auto !important; }
+            .slider-labels { display: flex !important; justify-content: space-between !important; font-size: 0.88em !important; color: #666 !important; margin: 8px auto 0 auto !important; width: 100% !important; max-width: 500px !important; padding: 0 4px !important; box-sizing: border-box !important; }
+            .sv-footer, .sv-action-bar { display: flex !important; justify-content: center !important; width: 100% !important; padding: 25px 0 !important; }
+            .sv-btn.sv-footer__complete-btn, .sv_complete_btn { display: inline-block !important; padding: 14px 50px !important; font-size: 1.15em !important; font-weight: bold !important; color: #fff !important; border: none !important; border-radius: 6px !important; cursor: pointer !important; transition: all 0.2s ease !important; box-shadow: 0 3px 6px rgba(0,0,0,0.1) !important; }
+            .btn-locked { background-color: #a0a0a0 !important; opacity: 0.85 !important; }
+            .btn-unlocked { background-color: #007bff !important; box-shadow: 0 4px 12px rgba(0,123,255,0.35) !important; opacity: 1.0 !important; }
+        `;
+        document.head.appendChild(styleEl);
+    }
+
     setTimeout(function() {
       // Description that goes below title
       var title_el = document.querySelector(".sv_header h3");
@@ -121,17 +140,23 @@ var leisure_survey_page = {
       // Lock submit button until all sliders are interacted with. Center finish button and default to grey until interacted with
       var submit_btn = document.querySelector(".sv-btn.sv-footer__complete-btn, .sv_complete_btn");
       if (submit_btn) {
-        submit_btn.disabled = false; // Leave button enable to capture clicks and give warnings when have not interacted with all sliders
-            
-            // Centering wrapper styling
-            var btn_container = submit_btn.parentNode;
-            if (btn_container) {
-                btn_container.style.cssText = "display: flex; justify-content: center; width: 100%; padding: 30px 0;";
-            }
-
-            // Button styling: blue when active
-            submit_btn.style.cssText = "display: inline-block; padding: 14px 45px; font-size: 1.15em; font-weight: bold; color: #fff; background-color: #a0a0a0; border: none; border-radius: 6px; cursor: pointer; transition: all 0.25s ease; box-shadow: 0 3px 6px rgba(0,0,0,0.1);";
+        // Keep button active to track clicks, apply grey, and add warning popup if try to proceed without interacting with all the sliders
+        var forms_completed = false; // Tracks if all sliders are done
+        submit_btn.disabled = false; 
+        submit_btn.classList.add("btn-locked"); 
+        
+        var new_submit = submit_btn.cloneNode(true);
+        submit_btn.parentNode.replaceChild(new_submit, submit_btn);
+        submit_btn = new_submit;
+    
+        submit_btn.addEventListener("click", function(e) {
+          if (!forms_completed) {
+              e.preventDefault();
+              e.stopPropagation();
+              alert("All responses are required. Please interact with every slider on the page before clicking Finish.");
         }
+    });
+  }
 
       // Lock submit button logic until all sliders interacted with 
       var total_sliders = sliders.length;
