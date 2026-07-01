@@ -161,18 +161,30 @@ var leisure_survey_page = {
   
       // Lock submit button until all sliders are interacted with. Center finish button and default to grey until interacted with
       var submit_btn = document.querySelector(".sv-btn.sv-footer__complete-btn, .sv_complete_btn");
+
+      // Track how many sliders have moved
+      var total_sliders = sliders.length;
+      var interacted_sliders = new Set();
+      var forms_completed = false; // Tracks if all sliders are done
+      
       if (submit_btn) {
         // Keep button active to track clicks, apply grey, and add warning popup if try to proceed without interacting with all the sliders
-        var forms_completed = false; // Tracks if all sliders are done
         submit_btn.disabled = false; 
         submit_btn.classList.add("btn-locked"); 
         
-        var new_submit = submit_btn.cloneNode(true);
-        submit_btn.parentNode.replaceChild(new_submit, submit_btn);
-        submit_btn = new_submit;
-    
+        // Force button to keep being centered
+        var btn_container = submit_btn.parentNode;
+        if (btn_container) {
+            btn_container.style.setProperty("display", "flex", "important");
+            btn_container.style.setProperty("justify-content", "center", "important");
+            btn_container.style.setProperty("width", "100%", "important");
+            btn_container.style.setProperty("float", "none", "important");
+        }
+
+        // Check if allowed to finish when clicking button
         submit_btn.addEventListener("click", function(e) {
           if (!forms_completed) {
+              // Stop form from submitting and show the warning popup if incomplete
               e.preventDefault();
               e.stopPropagation();
               alert("All responses are required. Please interact with every slider on the page before clicking Finish.");
@@ -208,11 +220,13 @@ var leisure_survey_page = {
         slider.addEventListener("input", function(e) {
           var idx = e.target.getAttribute("data-slider-idx");
           interacted_sliders.add(idx);
+
+          // If all sliders interacted with, then unlock form to go to next page
           if (interacted_sliders.size === total_sliders) {
             forms_completed = true;
             if (submit_btn) {
-              submit_btn.style.backgroundColor = "#007bff"; 
-              submit_btn.style.boxShadow = "0 4px 10px rgba(0,123,255,0.3)"; // Visual cue that it's clickable; Changes to green when unlocked
+              submit_btn.classList.remove("btn-locked");
+              submit_btn.classList.add("btn-unlocked");  // Visual cue that it's clickable; Changes from grey to blue when unlocked
             }  // closes if (submit_btn)
           }    // closes if (interacted_sliders.size...)
         });    // closes addEventListener
