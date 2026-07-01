@@ -78,7 +78,7 @@ var leisure_survey_page = {
         var desc = document.createElement("p");
         desc.id = "leisure-desc";
         desc.style.cssText = "font-size:0.9em; font-weight:normal; margin: 10px 20px;";
-        desc.innerHTML = "<b>Instructions:</b> Please rate the following leisure activities and hobbies below, based on how enjoyable or unenjoyable you find them. Some of these activities may not exactly match your preferences, but please try to rate based on how close it is to one of your preferred activities (For example: if you like card games/tabletop games/tile games, then you should rate the <q>Play board games with friends</q> option highly).</p>";
+        desc.innerHTML = "<b>Instructions:</b> Please rate the following leisure activities and hobbies below, based on how enjoyable or unenjoyable you find them. Some of these activities may not exactly match your preferences, but please try to rate based on how close it is to one of your preferred activities (For example: if you like card games/tabletop games/tile games, then you should rate the 'Play board games with friends' option highly).</p>";
         title_el.parentNode.insertBefore(desc, title_el.nextSibling);
       }
     
@@ -126,6 +126,7 @@ var leisure_survey_page = {
       });      // closes sliders.forEach
     }, 100);   // closes setTimeout; small delay, should let Knockout finish rendering
   }            // closes on_load: function()
+};             // closes leisure_survey_page
 
 /*3. Survey Block - Part 2: Math Tasks*/
 var math_survey_page = {
@@ -202,6 +203,7 @@ var math_survey_page = {
       });      // closes sliders.forEach
     }, 100);   // closes setTimeout; small delay, should let Knockout finish rendering
   }            // closes on_load: function()
+};             // closes math_survey_page
 
 /*4. Data Processing*/
 var process_survey_data = {
