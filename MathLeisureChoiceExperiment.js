@@ -208,81 +208,121 @@ var leisure_survey_page = {
 };             // closes leisure_survey_page
 
 /*3. Survey Block - Part 2: Math Tasks*/
-var math_survey_page = {
-  type: jsPsychSurvey,
-  pages: [[{ type: "text", prompt: "placeholder", name: "placeholder" }]],
-  title: "Part 2: Math Activities",
-  show_question_numbers: "off",
-  on_start: function(trial) {
-    var questions = math_assignments.map(function(math, index) {
-      return {
-        type: "text",
-        name: "math_" + index,
-        prompt: `${math.action} ${math.type}`,
-        input_type: "range",
-        required: false
-      };
-    });
-    trial.pages = [jsPsych.randomization.shuffle(questions)];
-  },
-  data: { phase: 'survey_rating_math' },
-  on_load: function() {
-    setTimeout(function() {
-      // Description that goes below title
-      var title_el = document.querySelector(".sv_header h3");
-      if (title_el && !document.querySelector("#leisure-desc")) {
-        var desc = document.createElement("p");
-        desc.id = "leisure-desc";
-        desc.style.cssText = "font-size:0.9em; font-weight:normal; margin: 10px 20px;";
-        desc.innerHTML = "<b>Instructions:</b> Please rate the following math activities below, based on how enjoyable or unenjoyable you find them.";
-        title_el.parentNode.insertBefore(desc, title_el.nextSibling);
-      }
-      
-      // Set min, max, step, defaultValue on all sliders
-      var sliders = document.querySelectorAll("input[type='range']");
-      sliders.forEach(function(slider) {
-        slider.setAttribute("min", "-5");
-        slider.setAttribute("max", "5");
-        slider.setAttribute("step", "0.01");
-        slider.setAttribute("value", "0");
-        slider.value = "0";
-  
-        // Add min/max labels under each slider
-        if (!slider.nextSibling || !slider.nextSibling.classList || !slider.nextSibling.classList.contains("slider-labels")) {
-          var labels = document.createElement("div");
-          labels.className = "slider-labels";
-          labels.style.cssText = "display:flex; justify-content:space-between; font-size:0.85em; color:#333; margin-top:4px; padding: 0 2px;";
-          labels.innerHTML = "<span>Unenjoyable (-5)</span><span>Neutral (0)</span><span>Enjoyable (+5)</span>";
-          slider.parentNode.insertBefore(labels, slider.nextSibling);
-        }
-      });
-  
-      // Lock submit button until all sliders are interacted with
-      var submit_btn = document.querySelector(".sv-btn.sv-footer__complete-btn, .sv_complete_btn");
-      if (submit_btn) {
-        submit_btn.disabled = true;
-        submit_btn.style.opacity = "0.5";
-      }
-  
-      var total_sliders = sliders.length;
-      var interacted_sliders = new Set();
-  
-      sliders.forEach(function(slider, index) {
-        slider.setAttribute("data-slider-idx", index);
-        slider.addEventListener("input", function(e) {
-          var idx = e.target.getAttribute("data-slider-idx");
-          interacted_sliders.add(idx);
-          if (interacted_sliders.size === total_sliders) {
-            if (submit_btn) {
-              submit_btn.disabled = false;
-              submit_btn.style.opacity = "1";
-            }  // closes if (submit_btn)
-          }    // closes if (interacted_sliders.size...)
-        });    // closes addEventListener
-      });      // closes sliders.forEach
-    }, 100);   // closes setTimeout; small delay, should let Knockout finish rendering
-  }            // closes on_load: function()
-};             // closes math_survey_page
+var math_survey_page = { 
+    type: jsPsychSurvey, 
+    pages: [[{ type: "text", prompt: "placeholder", name: "placeholder" }]], 
+    title: "Part 2: Math Activities", 
+    show_question_numbers: "off", 
+    on_start: function(trial) { 
+        var questions = math_assignments.map(function(math, index) { 
+            return { 
+                type: "text", 
+                name: "math_" + index, 
+                prompt: `${math.action} ${math.type}`, 
+                input_type: "range", 
+                required: false 
+            }; 
+        }); 
+        trial.pages = [jsPsych.randomization.shuffle(questions)]; 
+    }, 
+    data: {phase: 'survey_rating_math'}, 
+    on_load: function() { 
+        setTimeout(function() { 
+            // Description that goes below title 
+            var title_el = document.querySelector(".sv_header h3"); 
+            if (title_el && !document.querySelector("#math-desc")) { 
+                var desc = document.createElement("p"); 
+                desc.id = "math-desc"; // Fixed unique identifier tag for math page instructions
+                desc.style.cssText = "font-size:1em; font-weight:normal; margin: 15px 20px; line-height: 1.5; text-align: left;"; 
+                desc.innerHTML = "<b>Instructions:</b> Please rate the following math activities below, based on how enjoyable or unenjoyable you find them."; 
+                title_el.parentNode.insertBefore(desc, title_el.nextSibling); 
+            } 
+
+            // Set min, max, step, defaultValue on all sliders 
+            var sliders = document.querySelectorAll("input[type='range']"); 
+            sliders.forEach(function(slider) { 
+                slider.setAttribute("min", "-5"); 
+                slider.setAttribute("max", "5"); 
+                slider.setAttribute("step", "0.01"); 
+                slider.setAttribute("value", "0"); 
+                slider.value = "0"; 
+
+                // Make slider wider but still clean and usable 
+                slider.style.cssText = "width: 100%; max-width: 500px; display: block; margin: 0 auto;"; 
+
+                // Make question text larger than slider labels 
+                var questionWrapper = slider.closest(".sv-question, .sv_q, .sv-row"); 
+                if (questionWrapper) { 
+                    // Add vertical spacing between each separate activity block 
+                    questionWrapper.style.paddingTop = "25px"; 
+                    questionWrapper.style.paddingBottom = "25px"; 
+
+                    // Increase font size of the activity title text 
+                    var questionTitle = questionWrapper.querySelector(".sv-question__title, .sv_q_title, h5, span"); 
+                    if (questionTitle) { 
+                        questionTitle.style.cssText = "font-size: 1.25em; font-weight: 600; color: #333; display: block; text-align: center; margin-bottom: 12px;"; 
+                    } 
+                } 
+
+                // Add min/max labels under each slider (should match 500px slider max width)
+                if (!slider.nextSibling || !slider.nextSibling.classList || !slider.nextSibling.classList.contains("slider-labels")) { 
+                    var labels = document.createElement("div"); 
+                    labels.className = "slider-labels"; 
+                    labels.style.cssText = "display:flex; justify-content:space-between; font-size:0.85em; color:#333; margin: 8px auto 0 auto; width: 100%; max-width: 500px; padding: 0 4px; box-sizing: border-box;"; 
+                    labels.innerHTML = "<span>Unenjoyable (-5)</span><span>Neutral (0)</span><span>Enjoyable (+5)</span>"; 
+                    slider.parentNode.insertBefore(labels, slider.nextSibling); 
+                } 
+            }); 
+
+            // Set up the finish button to start out as grey
+            var submit_btn = document.querySelector(".sv-btn.sv-footer__complete-btn, .sv_complete_btn"); 
+            
+            // Track how many sliders have moved 
+            var total_sliders = sliders.length; 
+            var interacted_sliders = new Set(); 
+            var forms_completed = false; // Tracks if all sliders are done 
+
+            if (submit_btn) { 
+                // Keep the button clickable so we can catch early clicks 
+                submit_btn.disabled = false; 
+                submit_btn.classList.add("btn-locked"); 
+
+                // Check if the user is allowed to finish when they click the button 
+                submit_btn.addEventListener("click", function(e) { 
+                    if (!forms_completed) { 
+                        // Stop both the browser submit and any framework automation
+                        e.preventDefault(); 
+                        e.stopPropagation(); 
+                        
+                        alert("All responses are required. Please interact with every slider on the page before clicking Finish."); 
+                        
+                        return false; // Tells the framework to halt all actions immediately
+                    } 
+                }, true); // The "true" here catches the click before SurveyJS can process it
+            } 
+
+            // 4. Watch the sliders to see when the user moves them 
+            sliders.forEach(function(slider, index) { 
+                slider.setAttribute("data-slider-idx", index); 
+                slider.addEventListener("input", function(e) { 
+                    var idx = e.target.getAttribute("data-slider-idx"); 
+                    interacted_sliders.add(idx); 
+
+                    // If every single slider has been moved, unlock the page 
+                    if (interacted_sliders.size === total_sliders) { 
+                        forms_completed = true; 
+                        if (submit_btn) { 
+                            // Change the button color from grey to blue 
+                            submit_btn.classList.remove("btn-locked"); 
+                            submit_btn.classList.add("btn-unlocked"); 
+                        } 
+                    } 
+                }); // closes addEventListener 
+            }); // closes sliders.forEach 
+        }, 100); // closes setTimeout; small delay, should let Knockout finish rendering 
+    } // closes on_load: function() 
+}; // closes math_survey_page
+
 
 /*4. Data Processing*/
 var process_survey_data = {
