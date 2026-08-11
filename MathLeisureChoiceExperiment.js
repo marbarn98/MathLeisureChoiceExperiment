@@ -463,7 +463,7 @@ var choice_task_timeline = {
         data.selected_alternative = leisure_opt;
       } else {
         data.choice_category = 'math';
-        data.selected_alternative = `${data.math_action()} ${data.math_type()}`;
+        data.selected_alternative = `${data.math_action} ${data.math_type}`;
       }
     }
   }
