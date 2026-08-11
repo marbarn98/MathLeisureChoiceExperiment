@@ -423,11 +423,13 @@ var choice_task_timeline = {
       type: jsPsychHtmlButtonResponse,
       stimulus: "<h2>Which would you do:</h2>", // Trial probe
       choices: function() { // Choices (position randomized)
-        var leisure = jsPsych.timelineVariable('leisure');
-        var math = jsPsych.timelineVariable('math');
+        var leisure = jsPsych.evaluateTimelineVariable('leisure'); // Evaluate text in timeline variable
+        var math = jsPsych.evaluateTimelineVariable('math');
         var math_string = `${math.action} ${math.type} worth ${math.weight} of your grade due in ${math.deadline}`;
         var standard_choices = [leisure, math_string];
         var shuffled_choices = jsPsych.randomization.shuffle(standard_choices);
+        
+        // Save string data to timeline
         choice_task_timeline.current_left = shuffled_choices[0];
         choice_task_timeline.current_right = shuffled_choices[1];
         return shuffled_choices; 
@@ -435,11 +437,11 @@ var choice_task_timeline = {
     button_html: '<button class="jspsych-btn" style="width: 320px; min-height: 140px; margin: 20px; font-size: 18px; padding: 15px; white-space: normal;">%choice%</button>',
     data: { // Record data
       phase: '2afc_choice',
-      leisure_option: function() { return jsPsych.timelineVariable('leisure'); }, 
-      math_action: function() { return jsPsych.timelineVariable('math').action; },
-      math_type: function() { return jsPsych.timelineVariable('math').type; },
-      math_weight: function() { return jsPsych.timelineVariable('math').weight; },
-      math_deadline: function() { return jsPsych.timelineVariable('math').deadline; },
+      leisure_option: function() { return jsPsych.evaluateTimelineVariable('leisure'); }, 
+      math_action: function() { return jsPsych.evaluateTimelineVariable('math').action; },
+      math_type: function() { return jsPsych.evaluateTimelineVariable('math').type; },
+      math_weight: function() { return jsPsych.evaluateTimelineVariable('math').weight; },
+      math_deadline: function() { return jsPsych.evaluateTimelineVariable('math').deadline; },
       button_left_text: function() { return choice_task_timeline.current_left; },
       button_right_text: function() { return choice_task_timeline.current_right; }
     },
