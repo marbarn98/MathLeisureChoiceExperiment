@@ -47,7 +47,6 @@ var instructions = {
             "<p>Afterward, you will complete a decision task choosing between these alternatives.</p>" +
             "<p>If you understand these instructions, click <b>OK.</b></p>",
   allow_keys: false,
-  show_clickable_nav: true,
   post_trial_gap: 1000
 };
 
@@ -328,7 +327,7 @@ var process_survey_data = {
   type: jsPsychCallFunction,
   func: function() {
     var survey_trial = jsPsych.data.get().filter({ phase: 'survey_rating_leisure' }).values();
-    var responses = survey_trial.response; 
+    var responses = survey_trial[0].response; 
 
     var rated_activities = leisure_activities.map(function(activity_string, index) {
       var score_key = "leisure_" + index;
@@ -355,7 +354,7 @@ var choice_task_instructions = {
   choices: ['OK'],
   stimulus: "<p><b>Instructions:</b> In this task, you will be presented with a choice between two options:</p>" +
             "<p>           1) A <b>leisure activity</b> that you might find enjoyable on one side of the screen</p>" +
-            "<p>           1) A <b>math task</b> with a specific deadline and worth a percentage of your grade on the other side of the screen.</p>" +
+            "<p>           2) A <b>math task</b> with a specific deadline and worth a percentage of your grade on the other side of the screen.</p>" +
             "<p>For each choice, use your mouse to choose the <b>leisure activity</b> or the <b>math task</b>.</p>" +
             "<p>If you understand these instructions, click <b>OK.</b></p>",
   allow_keys: false,
@@ -384,8 +383,8 @@ var choice_task_timeline = {
         var math_string = `${math.action} ${math.type} worth ${math.weight} of your grade due in ${math.deadline}`;
         var standard_choices = [leisure, math_string];
         var shuffled_choices = jsPsych.randomization.shuffle(standard_choices);
-        this.current_left = shuffled_choices;
-        this.current_right = shuffled_choices;
+        this.current_left = shuffled_choices[0];
+        this.current_right = shuffled_choices[1];
         return shuffled_choices; 
     },
     button_html: '<button class="jspsych-btn" style="width: 320px; min-height: 140px; margin: 20px; font-size: 18px; padding: 15px; white-space: normal;">%choice%</button>',
@@ -463,8 +462,7 @@ var choice_task_timeline = {
 var debrief = {
   type: jsPsychHtmlKeyboardResponse,
   choices: ['OK'],
-  stimulus: "<p>Thank you for completing this part of the experiment. Press any key to be redirected for Sona crediting. Thank you!</p>",
-  allow_keys: false,
+  stimulus: "<p>Thank you for completing this part of the experiment. Click <b>OK</b> to be redirected for Sona crediting.</p>",
   post_trial_gap: 1000
 };
 
