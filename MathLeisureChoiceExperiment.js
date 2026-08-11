@@ -416,13 +416,15 @@ var choice_task_instructions = {
 var choice_task_timeline = {
   timeline: [
     {
-      // Show ptps a break every 36 trials
-      type: jsPsychHtmlKeyboardResponse,
-      stimulus: "<p>Take a break if needed, and press the spacebar when you are ready to continue.</p>",
-      choices: [' '],
+      timeline: [
+        {
+          type: jsPsychHtmlKeyboardResponse,
+          stimulus: "<p>Take a break if needed, and press the spacebar when you are ready to continue.</p>",
+          choices: [' ']
+        }
+      ],
       conditional_function: function() {
-        var trials_done = choice_task_timeline.completed_trials || 0; // Check trial counter
-        console.log('[break check] completed_trials =', trials_done, '| show break?', (trials_done > 0 && trials_done % 36 === 0));
+        var trials_done = choice_task_timeline.completed_trials || 0;
         return trials_done > 0 && trials_done % 36 === 0;
       }
     },
