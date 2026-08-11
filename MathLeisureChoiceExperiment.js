@@ -383,14 +383,14 @@ var choice_task_timeline = {
         var math_string = `${math.action} ${math.type} worth ${math.weight} of your grade due in ${math.deadline}`;
         var standard_choices = [leisure, math_string];
         var shuffled_choices = jsPsych.randomization.shuffle(standard_choices);
-        this.current_left = shuffled_choices[0];
-        this.current_right = shuffled_choices[1];
+        choice_task_timeline.current_left = shuffled_choices[0];
+        choice_task_timeline.current_right = shuffled_choices[1];
         return shuffled_choices; 
     },
     button_html: '<button class="jspsych-btn" style="width: 320px; min-height: 140px; margin: 20px; font-size: 18px; padding: 15px; white-space: normal;">%choice%</button>',
     data: { // Record data
       phase: '2afc_choice',
-      leisure_option: jsPsych.timelineVariable('leisure'),
+      leisure_option: function() { return jsPsych.timelineVariable('leisure'); }, 
       math_action: function() { return jsPsych.timelineVariable('math').action; },
       math_type: function() { return jsPsych.timelineVariable('math').type; },
       math_weight: function() { return jsPsych.timelineVariable('math').weight; },
@@ -399,13 +399,21 @@ var choice_task_timeline = {
       button_right_text: function() { return this.current_right; }
     },
     on_finish: function(data) { // Categorize data as math or leisure on finish
-      var chosen_text = (data.response === 0) ? data.button_left_text : data.button_right_text;
-      if (chosen_text === data.leisure_option) {
+      // Extract text 
+      var leisure_opt = (typeof data.leisure_option === 'function') ? data.leisure_option() : data.leisure_option;
+      var btn_left = (typeof data.button_left_text === 'function') ? data.button_left_text() : data.button_left_text;
+      var btn_right = (typeof data.button_right_text === 'function') ? data.button_right_text() : data.button_right_text;
+      
+      // Figure out text of the chosen button to save which button (0 or 1) they selected
+      var chosen_text = (data.response === 0) ? btn_left : btn_right;
+      
+      // Categorize trial output as leisure or math, and save 
+      if (chosen_text === leisure_opt) {
         data.choice_category = 'leisure';
-        data.selected_alternative = data.leisure_option;
+        data.selected_alternative = leisure_opt;
       } else {
         data.choice_category = 'math';
-        data.selected_alternative = `${data.math_action} ${data.math_type}`;
+        data.selected_alternative = `${data.math_action()} ${data.math_type()}`;
       }
     }
   }
