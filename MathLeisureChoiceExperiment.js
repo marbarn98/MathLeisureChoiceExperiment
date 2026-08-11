@@ -389,6 +389,10 @@ var process_survey_data = {
     
     // Add combo-generated trials into choice task timeline
     choice_task_timeline.timeline_variables = jsPsych.randomization.shuffle(combinations);
+    // Add choice_task_instructions, choice_task_timeline, debrief phases to experiment now that combinations have been created. Actively adding these timeline variables
+    jsPsych.addNodeToEndOfTimeline(choice_task_instructions);
+    jsPsych.addNodeToEndOfTimeline(choice_task_timeline);
+    jsPsych.addNodeToEndOfTimeline(debrief);
   }
 };
 
@@ -484,9 +488,11 @@ timeline.push(instructions); // Present instructions
 timeline.push(leisure_survey_page); // Present leisure activity survey
 timeline.push(math_survey_page); // Present math activity survey
 timeline.push(process_survey_data);  // Process top_activities from survey data
-timeline.push(choice_task_instructions); // Present choice task instructions
-timeline.push(choice_task_timeline); // Present choice task; generate and runs 216 trials
-timeline.push(debrief); // Present debrief/thank you page
+
+// No longer pushing these below here, now added inside process_survey_data after the combos of math/leisure made
+// timeline.push(choice_task_instructions); // Present choice task instructions
+// timeline.push(choice_task_timeline); // Present choice task; generate and runs 216 trials
+// timeline.push(debrief); // Present debrief/thank you page
 
 /* Remove comment notation below if want to run in browser */
 /*start experiment*/
