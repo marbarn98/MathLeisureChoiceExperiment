@@ -390,7 +390,6 @@ var process_survey_data = {
     // Add combo-generated trials into choice task timeline
     choice_task_timeline.timeline_variables = jsPsych.randomization.shuffle(combinations);
   }
-  }
 };
 
 /*Dynamic Choice Task: Presents combos of different math tasks with leisure options that are most subjectively enjoyable to participant, based on their survey ratings*/
