@@ -322,7 +322,7 @@ var math_survey_page = {
 }; // closes math_survey_page
 
 
-/*Data processing for leisure activities*/
+/*Data processing for leisure activities and trial combination generation*/
 var process_survey_data = {
   type: jsPsychCallFunction,
   func: function() {
@@ -345,6 +345,51 @@ var process_survey_data = {
 
     // Add top_activities to jsPsych data so Qualtrics can use it 
     jsPsych.data.addProperties({ top_activities: top_activities });
+
+
+    /* Trial combination generator and timeline assigning */
+    var combinations = [];
+    var flat_math_tasks = [];
+    
+    // Math array: 6 task configurations
+    math_assignments.forEach(function(item) {
+      if (Array.isArray(item.weight)) {
+        item.weight.forEach(function(w) {
+          flat_math_tasks.push({
+            action: item.action,
+            type: item.type,
+            weight: w
+          });
+        });
+      } else {
+        flat_math_tasks.push({
+          action: item.action,
+          type: item.type,
+          weight: item.weight
+        });
+      }
+    });
+
+    // Make combos: 6 Leisure x 6 Math Tasks x 6 Deadlines = 216 Trials
+    for (var i = 0; i < top_activities.length; i++) {       
+      for (var j = 0; j < flat_math_tasks.length; j++) {    
+        for (var k = 0; k < deadlines.length; k++) {    
+          combinations.push({
+            leisure: top_activities[i],
+            math: {
+              action: flat_math_tasks[j].action,
+              type: flat_math_tasks[j].type,
+              weight: flat_math_tasks[j].weight,
+              deadline: deadlines[k]
+            }
+          });
+        }
+      }
+    }
+    
+    // Add combo-generated trials into choice task timeline
+    choice_task_timeline.timeline_variables = jsPsych.randomization.shuffle(combinations);
+  }
   }
 };
 
@@ -395,8 +440,8 @@ var choice_task_timeline = {
       math_type: function() { return jsPsych.timelineVariable('math').type; },
       math_weight: function() { return jsPsych.timelineVariable('math').weight; },
       math_deadline: function() { return jsPsych.timelineVariable('math').deadline; },
-      button_left_text: function() { return this.current_left; },
-      button_right_text: function() { return this.current_right; }
+      button_left_text: function() { return choice_task_timeline.current_left; },
+      button_right_text: function() { return choice_task_timeline.current_right; }
     },
     on_finish: function(data) { // Categorize data as math or leisure on finish
       // Extract text 
@@ -420,50 +465,7 @@ var choice_task_timeline = {
 ],
 
 // 216-trial-combination loop
-  timeline_variables: function() {
-    var combinations = [];
-    var flat_math_tasks = [];
-    
-    // Math array: 6 task configurations
-    math_assignments.forEach(function(item) {
-      if (Array.isArray(item.weight)) {
-        item.weight.forEach(function(w) {
-          flat_math_tasks.push({
-            action: item.action,
-            type: item.type,
-            weight: w
-          });
-        });
-      } else {
-        flat_math_tasks.push({
-          action: item.action,
-          type: item.type,
-          weight: item.weight
-        });
-      }
-    });
-
-    // Make combos: 6 Leisure x 6 Math Tasks x 6 Deadlines = 216 Trials
-    for (var i = 0; i < top_activities.length; i++) {       
-      for (var j = 0; j < flat_math_tasks.length; j++) {    
-        for (var k = 0; k < deadlines.length; k++) {    
-          
-          combinations.push({
-            leisure: top_activities[i],
-            math: {
-              action: flat_math_tasks[j].action,
-              type: flat_math_tasks[j].type,
-              weight: flat_math_tasks[j].weight,
-              deadline: deadlines[k]
-            }
-          });
-          
-        }
-      }
-    }
-    
-    return jsPsych.randomization.shuffle(combinations);
-  }
+  timeline_variables: []
 };
 
 /*Debrief/Thank You page*/
