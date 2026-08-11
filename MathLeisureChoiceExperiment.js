@@ -422,6 +422,7 @@ var choice_task_timeline = {
       choices: [' '],
       conditional_function: function() {
         var trials_done = choice_task_timeline.completed_trials || 0; // Check trial counter
+        console.log('[break check] completed_trials =', trials_done, '| show break?', (trials_done > 0 && trials_done % 36 === 0));
         return trials_done > 0 && trials_done % 36 === 0;
       }
     },
