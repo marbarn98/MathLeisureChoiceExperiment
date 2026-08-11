@@ -10,8 +10,8 @@ var jsPsych = initJsPsych({
 
 /* put html in separate file */
 
-/* experiment parameters */
-var top_activities = []; // Will be populated dynamically in the experiment, after the survey
+/* Experiment parameters */
+var top_activities = []; // Will be populated in randomly during the experiment, after the survey
 var deadlines = ["4 hours", "12 hours", "1 day", "3 days", "1 week", "1 month"];
 
 var math_assignments = [
@@ -21,7 +21,7 @@ var math_assignments = [
   { action: "Study for a", type: "major math exam", weight: "20%" }                      
 ];
 
-// Pool of leisure activities for participants to rate
+// Pool of leisure activities for participants to rate in survey
 var leisure_activities = [
   "Read a book", "Do a puzzle", "Cook your favorite meal", "Exercise", "Scroll on social media",
   "Play your favorite video game", "Hang out with friends", "Grab something to eat", "Watch a show, movie, or video", 
@@ -33,13 +33,13 @@ var leisure_activities = [
   "Organize your room", "Practice an instrument", "Go on a date"
 ];
 
-/*set up welcome block*/
+/*Set up Welcome block*/
 var welcome = {
   type: jsPsychHtmlKeyboardResponse,
   stimulus: "Welcome to the experiment. Press any key to begin."
 };
 
-/*1. set up instructions block*/
+/*Set up Instructions block*/
 var instructions = {
   type: jsPsychHtmlButtonResponse,
   choices: ['OK'],
@@ -51,7 +51,7 @@ var instructions = {
   post_trial_gap: 1000
 };
 
-/*2. Survey Block - Part 1: Leisure Activities*/
+/*Survey block - Part 1: Leisure Activities*/
 var leisure_survey_page = {
   type: jsPsychSurvey,
   pages: [[{ type: "text", prompt: "placeholder", name: "placeholder" }]],
@@ -114,7 +114,7 @@ var leisure_survey_page = {
     }
 
     setTimeout(function() {
-      // Description that goes below title
+      // Instructions below survey title
       var title_el = document.querySelector(".sv_header h3");
       if (title_el && !document.querySelector("#leisure-desc")) {
         var desc = document.createElement("p");
@@ -139,18 +139,18 @@ var leisure_survey_page = {
         // Make question text larger than slider labels
         var questionWrapper = slider.closest(".sv-question, .sv_q, .sv-row");
         if (questionWrapper) {
-            // Add vertical spacing between each separate activity block
+            // Add some spacing between each separate activity question
             questionWrapper.style.paddingTop = "25px";
             questionWrapper.style.paddingBottom = "25px";
                 
-            // Increase font size of the activity title text
+            // Increase font size of activity text
             var questionTitle = questionWrapper.querySelector(".sv-question__title, .sv_q_title, h5, span");
             if (questionTitle) {
                 questionTitle.style.cssText = "font-size: 1.25em; font-weight: 600; color: #333; display: block; text-align: center; margin-bottom: 12px;";
             }
         }
         
-        // Add min/max labels under each slider (should match 500px slider max width
+        // Add min/max labels under each slider (should match 500px slider max width)
         if (!slider.nextSibling || !slider.nextSibling.classList || !slider.nextSibling.classList.contains("slider-labels")) {
           var labels = document.createElement("div");
           labels.className = "slider-labels";
@@ -160,7 +160,7 @@ var leisure_survey_page = {
         }
       });
   
-      // Lock submit button until all sliders are interacted with. Center finish button and default to grey until interacted with
+      // Lock submit button until all sliders are moved. Center finish button and default to grey
       var submit_btn = document.querySelector(".sv-btn.sv-footer__complete-btn, .sv_complete_btn");
 
       // Track how many sliders have moved
@@ -169,30 +169,30 @@ var leisure_survey_page = {
       var forms_completed = false; // Tracks if all sliders are done
       
       if (submit_btn) { 
-          // Keep the button clickable so we can catch early clicks
+          // Keep submit button clickable to catch clicks before survey complete
           submit_btn.disabled = false; 
           submit_btn.classList.add("btn-locked"); 
           
-          // Check if the user is allowed to finish when they click the button
+          // Check if the ptp is allowed to finish survey when they click the button
           submit_btn.addEventListener("click", function(e) {
               if (!forms_completed) {
-                  // Stop both the browser submit and any framework automation; show the warning popup 
+                  // Stop both the browser submit and any framework automation; show the popup that responses are required
                   e.preventDefault();
                   e.stopPropagation();
                   alert("All responses are required. Please interact with every slider on the page before clicking Finish.");
-                  return false; // Tells framework to stop all actions and don't change page
+                  return false; // Stop all actions and don't change page
               }
           }, true); // "True" catches the click before SurveyJS can process it. Intercepts mouse click before SurveyJS registers the button click.
       } 
 
-      // 4. Watch the sliders to see when the user moves them
+      // Watch the sliders to see when ptp moves them
       sliders.forEach(function(slider, index) { 
           slider.setAttribute("data-slider-idx", index); 
           slider.addEventListener("input", function(e) { 
               var idx = e.target.getAttribute("data-slider-idx"); 
               interacted_sliders.add(idx); 
               
-              // If every single slider has been moved, unlock the page
+              // If every single slider has been moved, unlock the button and allow form completion
               if (interacted_sliders.size === total_sliders) { 
                   forms_completed = true; 
                   if (submit_btn) { 
@@ -203,11 +203,11 @@ var leisure_survey_page = {
               } // closes if (interacted_sliders.size...)
           }); // closes addEventListener
       }); // closes sliders.forEach
-    }, 100);   // closes setTimeout; small delay, should let Knockout finish rendering
-  }            // closes on_load: function()
-};             // closes leisure_survey_page
+    }, 100); // closes setTimeout; small delay, should let Knockout finish rendering
+  } // closes on_load: function()
+}; // closes leisure_survey_page
 
-/*3. Survey Block - Part 2: Math Tasks*/
+/*Survey block - Part 2: Math Tasks*/
 var math_survey_page = { 
     type: jsPsychSurvey, 
     pages: [[{ type: "text", prompt: "placeholder", name: "placeholder" }]], 
@@ -228,11 +228,11 @@ var math_survey_page = {
     data: {phase: 'survey_rating_math'}, 
     on_load: function() { 
         setTimeout(function() { 
-            // Description that goes below title 
+            // Instructions that go below title 
             var title_el = document.querySelector(".sv_header h3"); 
             if (title_el && !document.querySelector("#math-desc")) { 
                 var desc = document.createElement("p"); 
-                desc.id = "math-desc"; // Fixed unique identifier tag for math page instructions
+                desc.id = "math-desc"; 
                 desc.style.cssText = "font-size:1em; font-weight:normal; margin: 15px 20px; line-height: 1.5; text-align: left;"; 
                 desc.innerHTML = "<b>Instructions:</b> Please rate the following math activities below, based on how enjoyable or unenjoyable you find them."; 
                 title_el.parentNode.insertBefore(desc, title_el.nextSibling); 
@@ -247,17 +247,17 @@ var math_survey_page = {
                 slider.setAttribute("value", "0"); 
                 slider.value = "0"; 
 
-                // Make slider wider but still clean and usable 
+                // Slider width/style
                 slider.style.cssText = "width: 100%; max-width: 500px; display: block; margin: 0 auto;"; 
 
                 // Make question text larger than slider labels 
                 var questionWrapper = slider.closest(".sv-question, .sv_q, .sv-row"); 
                 if (questionWrapper) { 
-                    // Add vertical spacing between each separate activity block 
+                    // Add some spacing between each separate activity question
                     questionWrapper.style.paddingTop = "25px"; 
                     questionWrapper.style.paddingBottom = "25px"; 
 
-                    // Increase font size of the activity title text 
+                    // Increase font size of activity text 
                     var questionTitle = questionWrapper.querySelector(".sv-question__title, .sv_q_title, h5, span"); 
                     if (questionTitle) { 
                         questionTitle.style.cssText = "font-size: 1.25em; font-weight: 600; color: #333; display: block; text-align: center; margin-bottom: 12px;"; 
@@ -274,7 +274,7 @@ var math_survey_page = {
                 } 
             }); 
 
-            // Set up the finish button to start out as grey
+            // Set up the submit button to start out as grey
             var submit_btn = document.querySelector(".sv-btn.sv-footer__complete-btn, .sv_complete_btn"); 
             
             // Track how many sliders have moved 
@@ -283,25 +283,24 @@ var math_survey_page = {
             var forms_completed = false; // Tracks if all sliders are done 
 
             if (submit_btn) { 
-                // Keep the button clickable so we can catch early clicks 
+                // Keep submit button clickable to catch clicks before survey complete
                 submit_btn.disabled = false; 
                 submit_btn.classList.add("btn-locked"); 
 
-                // Check if the user is allowed to finish when they click the button 
+                // Check if the ptp is allowed to finish survey when they click the button 
                 submit_btn.addEventListener("click", function(e) { 
                     if (!forms_completed) { 
-                        // Stop both the browser submit and any framework automation
                         e.preventDefault(); 
                         e.stopPropagation(); 
                         
                         alert("All responses are required. Please interact with every slider on the page before clicking Finish."); 
                         
-                        return false; // Tells the framework to halt all actions immediately
+                        return false; 
                     } 
-                }, true); // The "true" here catches the click before SurveyJS can process it
+                }, true); 
             } 
 
-            // 4. Watch the sliders to see when the user moves them 
+            // Watch the sliders to see when the ptp moves them 
             sliders.forEach(function(slider, index) { 
                 slider.setAttribute("data-slider-idx", index); 
                 slider.addEventListener("input", function(e) { 
@@ -324,7 +323,7 @@ var math_survey_page = {
 }; // closes math_survey_page
 
 
-/*4. Data Processing*/
+/*Data processing for leisure activities*/
 var process_survey_data = {
   type: jsPsychCallFunction,
   func: function() {
@@ -345,12 +344,12 @@ var process_survey_data = {
     top_activities = randomized_before_sort.slice(0, 6).map(function(item) { return item.activity; });
     console.log("Top 6 selected leisure activities from pool:", top_activities);
 
-    //write top_activities into jsPsych data so Qualtrics can recover it 
+    // Add top_activities to jsPsych data so Qualtrics can use it 
     jsPsych.data.addProperties({ top_activities: top_activities });
   }
 };
 
-/*5. Dynamic Choice Task: Presents Combinations of different Math Tasks with Leisure Options that are most Subjectively Enjoyable to Participant, based on their Ratings*/
+/*Dynamic Choice Task: Presents combos of different math tasks with leisure options that are most subjectively enjoyable to participant, based on their survey ratings*/
 var choice_task_instructions = {
   type: jsPsychHtmlButtonResponse,
   choices: ['OK'],
@@ -366,7 +365,7 @@ var choice_task_instructions = {
 var choice_task_timeline = {
   timeline: [
     {
-      // Present a break to participants every 36 trials
+      // Show ptps a break every 36 trials
       type: jsPsychHtmlKeyboardResponse,
       stimulus: "<p>Take a break if needed, and press the spacebar when you are ready to continue.</p>",
       choices: [' '],
@@ -378,8 +377,8 @@ var choice_task_timeline = {
     {
       // Trial presentations
       type: jsPsychHtmlButtonResponse,
-      stimulus: "<h2>Which would you do:</h2>",
-      choices: function() {
+      stimulus: "<h2>Which would you do:</h2>", // Trial probe
+      choices: function() { // Choices (position randomized)
         var leisure = jsPsych.timelineVariable('leisure');
         var math = jsPsych.timelineVariable('math');
         var math_string = `${math.action} ${math.type} worth ${math.weight} of your grade due in ${math.deadline}`;
@@ -390,7 +389,7 @@ var choice_task_timeline = {
         return shuffled_choices; 
     },
     button_html: '<button class="jspsych-btn" style="width: 320px; min-height: 140px; margin: 20px; font-size: 18px; padding: 15px; white-space: normal;">%choice%</button>',
-    data: {
+    data: { // Record data
       phase: '2afc_choice',
       leisure_option: jsPsych.timelineVariable('leisure'),
       math_action: function() { return jsPsych.timelineVariable('math').action; },
@@ -400,7 +399,7 @@ var choice_task_timeline = {
       button_left_text: function() { return this.current_left; },
       button_right_text: function() { return this.current_right; }
     },
-    on_finish: function(data) {
+    on_finish: function(data) { // Categorize data as math or leisure on finish
       var chosen_text = (data.response === 0) ? data.button_left_text : data.button_right_text;
       if (chosen_text === data.leisure_option) {
         data.choice_category = 'leisure';
@@ -413,12 +412,12 @@ var choice_task_timeline = {
   }
 ],
 
-// 216-combination loop
+// 216-trial-combination loop
   timeline_variables: function() {
     var combinations = [];
     var flat_math_tasks = [];
     
-    // 1. Math array: 6 configurations
+    // Math array: 6 task configurations
     math_assignments.forEach(function(item) {
       if (Array.isArray(item.weight)) {
         item.weight.forEach(function(w) {
@@ -437,7 +436,7 @@ var choice_task_timeline = {
       }
     });
 
-    // 2. 6 Leisure x 6 Math Tasks x 6 Deadlines = 216 Trials
+    // Make combos: 6 Leisure x 6 Math Tasks x 6 Deadlines = 216 Trials
     for (var i = 0; i < top_activities.length; i++) {       
       for (var j = 0; j < flat_math_tasks.length; j++) {    
         for (var k = 0; k < deadlines.length; k++) {    
@@ -460,25 +459,25 @@ var choice_task_timeline = {
   }
 };
 
-/*6. Debrief:*/
+/*Debrief/Thank You page*/
 var debrief = {
   type: jsPsychHtmlKeyboardResponse,
   choices: ['OK'],
-  stimulus: "<p>Thank you for completing this part of the experiment. Press any key to be redirected for crediting. Thank you!</p>",
+  stimulus: "<p>Thank you for completing this part of the experiment. Press any key to be redirected for Sona crediting. Thank you!</p>",
   allow_keys: false,
   post_trial_gap: 1000
 };
 
-/*7. Set Up Experiment Timeline*/
+/*Experiment timeline setup*/
 var timeline = [];
-timeline.push(welcome); // Presents welcome page
-timeline.push(instructions); // Presents initial instructions
-timeline.push(leisure_survey_page); // Presents leisure activity survey
-timeline.push(math_survey_page); // Presents math activity survey
-timeline.push(process_survey_data);  // Computes top_activities
-timeline.push(choice_task_instructions); // Presents choice task instructions
-timeline.push(choice_task_timeline); // Generates and runs 216 trials
-timeline.push(debrief);
+timeline.push(welcome); // Present welcome
+timeline.push(instructions); // Present instructions
+timeline.push(leisure_survey_page); // Present leisure activity survey
+timeline.push(math_survey_page); // Present math activity survey
+timeline.push(process_survey_data);  // Process top_activities from survey data
+timeline.push(choice_task_instructions); // Present choice task instructions
+timeline.push(choice_task_timeline); // Present choice task; generate and runs 216 trials
+timeline.push(debrief); // Present debrief/thank you page
 
 /* Remove comment notation below if want to run in browser */
 /*start experiment*/
