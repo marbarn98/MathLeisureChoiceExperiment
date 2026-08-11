@@ -389,6 +389,10 @@ var process_survey_data = {
     
     // Add combo-generated trials into choice task timeline
     choice_task_timeline.timeline_variables = jsPsych.randomization.shuffle(combinations);
+    
+    // Initialize/Reset take-a-break screen counter
+    choice_task_timeline.completed_trials = 0; 
+
     // Add choice_task_instructions, choice_task_timeline, debrief phases to experiment now that combinations have been created. Actively adding these timeline variables
     jsPsych.addNodeToEndOfTimeline(choice_task_instructions);
     jsPsych.addNodeToEndOfTimeline(choice_task_timeline);
@@ -417,7 +421,7 @@ var choice_task_timeline = {
       stimulus: "<p>Take a break if needed, and press the spacebar when you are ready to continue.</p>",
       choices: [' '],
       conditional_function: function() {
-        var trials_done = jsPsych.data.get().filter({ phase: '2afc_choice' }).count();
+        var trials_done = choice_task_timeline.completed_trials || 0; // Check trial counter
         return trials_done > 0 && trials_done % 36 === 0;
       }
     },
@@ -449,6 +453,8 @@ var choice_task_timeline = {
       button_right_text: function() { return choice_task_timeline.current_right; }
     },
     on_finish: function(data) { // Categorize data as math or leisure on finish
+      // Increment trial count that calculates when to show take-a-break screen
+      choice_task_timeline.completed_trials = (choice_task_timeline.completed_trials || 0) + 1;
       // Extract text 
       var leisure_opt = (typeof data.leisure_option === 'function') ? data.leisure_option() : data.leisure_option;
       var btn_left = (typeof data.button_left_text === 'function') ? data.button_left_text() : data.button_left_text;
