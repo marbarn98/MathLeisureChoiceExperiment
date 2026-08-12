@@ -496,6 +496,7 @@ var choice_task_timeline = {
         }
       // Set up too-fast-warning display
       var display_element = jsPsych.getDisplayElement();
+      var btnGroup = display_element.querySelector('#jspsych-html-button-response-btngroup');
   
       // Create warning message
       var warningEl = document.getElementById("too-fast-warning");
@@ -505,7 +506,7 @@ var choice_task_timeline = {
         warningEl.style.color = "#cd0000"; 
         warningEl.style.fontWeight = "bold";
         warningEl.style.fontSize = "16px";
-        warningEl.style.marginTop = "15px";
+        warningEl.style.marginTop = "20px";
         warningEl.style.height = "24px"; // Set height so page doesn't jump
         warningEl.style.visibility = "hidden";
         warningEl.innerText = "You're answering too fast! Please read both options carefully before selecting.";
@@ -513,6 +514,13 @@ var choice_task_timeline = {
       } else {
         warningEl.style.visibility = "hidden";
       }
+      // Warning message rendering (show up below the two choice boxes)
+      if (btnGroup) {
+        btnGroup.appendChild(warningEl);
+      } else {
+        display_element.appendChild(warningEl);
+      }
+
       // Disabling buttons when loading up trial so can't register clicks at very beginning. Register clicks only after 1500 ms; block early clicks.
       // Display of buttons should still look same to ptp regardless of early/later time frame
       // Also should show warning associated with early clicking to deter behavior
@@ -529,10 +537,10 @@ var choice_task_timeline = {
           void warningEl.offsetWidth;
           warningEl.classList.add("warning-active");
         } else {
-          display_element.removeEventListener('click', blockEarlyClicks, true); // Remove listener for early clicks after the 1.5s is over
+          display_element.removeEventListener('click', handleEarlyClick, true); // Remove listener for early clicks after the 1.5s is over
         }
       };
-      display_element.addEventListener('click', blockEarlyClicks, true); // true = mouse click capturing phase
+      display_element.addEventListener('click', handleEarlyClick, true); // true = mouse click capturing phase
     },
 
     data: { // Record data
