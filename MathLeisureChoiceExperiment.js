@@ -482,22 +482,57 @@ var choice_task_timeline = {
               transform: translateY(1px) !important; /* Moves down when click */
               box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08) !important; /* Box shadowing */
             }
+            /* Shake/movement for too-fast-warning */
+            @keyframes warning-shake {
+              0%, 100% { transform: translateX(0); }
+              20%, 60% { transform: translateX(-6px); }
+              40%, 80% { transform: translateX(6px); }
+            }
+            .warning-active {
+              animation: warning-shake 0.3s ease-in-out;
+            }
           `;
           document.head.appendChild(styleEl);
         }
+      // Set up too-fast-warning display
+      var display_element = jsPsych.getDisplayElement();
+  
+      // Create warning message
+      var warningEl = document.getElementById("too-fast-warning");
+      if (!warningEl) {
+        warningEl = document.createElement("div");
+        warningEl.id = "too-fast-warning";
+        warningEl.style.color = "#cd0000"; 
+        warningEl.style.fontWeight = "bold";
+        warningEl.style.fontSize = "16px";
+        warningEl.style.marginTop = "15px";
+        warningEl.style.height = "24px"; // Set height so page doesn't jump
+        warningEl.style.visibility = "hidden";
+        warningEl.innerText = "You're answering too fast! Please read both options carefully before selecting.";
+        display_element.appendChild(warningEl);
+      } else {
+        warningEl.style.visibility = "hidden";
+      }
       // Disabling buttons when loading up trial so can't register clicks at very beginning. Register clicks only after 1500 ms; block early clicks.
       // Display of buttons should still look same to ptp regardless of early/later time frame
-      var display_element = jsPsych.getDisplayElement();
+      // Also should show warning associated with early clicking to deter behavior
       var trial_start = performance.now();
-      var blockEarlyClicks = function(e) {
-        if (performance.now() - trial_start < minimum_rt) {
+      var handleEarlyClick = function(e) {
+        var elapsed = performance.now() - trial_start;
+        if (elapsed < minimum_rt) {
           e.stopPropagation();
           e.preventDefault();
+
+          // Show too-fast-warning, move/shake to get ptp's attention
+          warningEl.style.visibility = "visible";
+          warningEl.classList.remove("warning-active");
+          void warningEl.offsetWidth;
+          warningEl.classList.add("warning-active");
         } else {
-          display_element.removeEventListener('click', blockEarlyClicks, true);
+          display_element.removeEventListener('click', blockEarlyClicks, true); // Remove listener for early clicks after the 1.5s is over
         }
       };
-      display_element.addEventListener('click', blockEarlyClicks, true); // true = capture phase
+      display_element.addEventListener('click', blockEarlyClicks, true); // true = mouse click capturing phase
     },
 
     data: { // Record data
