@@ -432,6 +432,7 @@ var choice_task_timeline = {
         return trials_done > 0 && trials_done % 36 === 0;
       }
     },
+    {
       // Trial presentations
       type: jsPsychHtmlButtonResponse,
       stimulus: "<h2>Which would you do:</h2>", // Trial probe
@@ -445,7 +446,8 @@ var choice_task_timeline = {
         // Save string data to timeline
         choice_task_timeline.current_left = shuffled_choices[0];
         choice_task_timeline.current_right = shuffled_choices[1];
-        return shuffled_choices; 
+        return shuffled_choices;
+      }
     },
     button_html: '<button class="jspsych-btn" style="width: 320px; min-height: 140px; margin: 20px; font-size: 18px; padding: 15px; white-space: normal;">%choice%</button>',
     post_trial_gap: iti // Blank intertrial interval presented after a trial
@@ -459,7 +461,7 @@ var choice_task_timeline = {
         btns.forEach(function(btn) {
           btn.removeAttribute('disabled');
         });
-      }, MIN_RESPONSE_TIME_MS);
+      }, minimum_rt);
     },
 
     data: { // Record data
