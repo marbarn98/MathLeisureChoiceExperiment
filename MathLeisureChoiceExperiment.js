@@ -51,7 +51,7 @@ var instructions = {
             "<p>Afterward, you will complete a decision task choosing between these alternatives.</p>" +
             "<p>If you understand these instructions, click <b>OK.</b></p>",
   allow_keys: false,
-  post_trial_gap: 1000 // Show quick blank screen before moving onto the first survey
+  post_trial_gap: 500 // Show quick blank screen before moving onto the first survey
 };
 
 /*Survey block - Part 1: Leisure Activities*/
@@ -60,7 +60,7 @@ var leisure_survey_page = {
   pages: [[{ type: "text", prompt: "placeholder", name: "placeholder" }]],
   title: "Part 1: Leisure Activities",
   show_question_numbers: "off",
-  post_trial_gap: 1000, // Show a quick blank screen before math_survey_page. Should visually divide the survey pages better
+  post_trial_gap: 500, // Show a quick blank screen before math_survey_page. Should visually divide the survey pages better
   on_start: function(trial) {
     var questions = leisure_activities.map(function(activity_string, index) {
       return {
@@ -226,7 +226,7 @@ var math_survey_page = {
     pages: [[{ type: "text", prompt: "placeholder", name: "placeholder" }]], 
     title: "Part 2: Math Activities", 
     show_question_numbers: "off", 
-    post_trial_gap: 1000, // Quick gap before moving onto choice task instrux page
+    post_trial_gap: 500, // Quick gap before moving onto choice task instrux page
     on_start: function(trial) { 
         var questions = math_assignments.map(function(math, index) { 
             return { 
@@ -429,7 +429,7 @@ var choice_task_instructions = {
   type: jsPsychHtmlButtonResponse,
   choices: ['OK'],
   stimulus: `
-      <div style="max-width: 750px; margin: 0 auto; text-align: left; line-height: 1.6;">
+      <div style="max-width: 850px; margin: 0 auto; text-align: left; line-height: 1.6;">
         <h2 style="text-align: center;">Instructions</h2>
         
         <p>
@@ -457,7 +457,7 @@ var choice_task_instructions = {
 
     button_html: '<button class="jspsych-btn">%choice%</button>',
     allow_keys: false,
-    post_trial_gap: 1000
+    post_trial_gap: 500
 };
 
 var choice_task_timeline = {
@@ -619,7 +619,7 @@ var debrief = {
   type: jsPsychHtmlKeyboardResponse,
   choices: ['OK'],
   stimulus: "<p>Thank you for completing this part of the experiment. Click <b>OK</b> to be redirected for Sona crediting.</p>",
-  post_trial_gap: 1000
+  post_trial_gap: 500
 };
 
 /*Experiment timeline setup*/
