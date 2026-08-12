@@ -458,7 +458,6 @@ var choice_task_instructions = {
     button_html: '<button class="jspsych-btn">%choice%</button>',
     allow_keys: false,
     post_trial_gap: 1000
-  };
 };
 
 var choice_task_timeline = {
