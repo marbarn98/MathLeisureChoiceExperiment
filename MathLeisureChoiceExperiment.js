@@ -432,7 +432,6 @@ var choice_task_timeline = {
         return trials_done > 0 && trials_done % 36 === 0;
       }
     },
-    {
       // Trial presentations
       type: jsPsychHtmlButtonResponse,
       stimulus: "<h2>Which would you do:</h2>", // Trial probe
