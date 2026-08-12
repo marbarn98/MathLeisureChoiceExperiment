@@ -91,7 +91,7 @@ var leisure_survey_page = {
             input[type='range'] { width: 100% !important; max-width: 500px !important; display: block !important; margin: 0 auto !important; }
             .slider-labels { display: flex !important; justify-content: space-between !important; font-size: 0.88em !important; color: #666 !important; margin: 8px auto 0 auto !important; width: 100% !important; max-width: 500px !important; padding: 0 4px !important; box-sizing: border-box !important; }
             
-            /* Overhaul all possible footer/navigation wrappers to make sure finish button is centered */
+            /* Finish button centered */
             .sv-footer, .sv-action-bar, .sv_nav, .sv-footer__container, .sv-footer__right, .sv-action-bar--right { 
                 display: flex !important; 
                 justify-content: center !important; 
@@ -103,7 +103,7 @@ var leisure_survey_page = {
                 padding: 25px 0 !important; 
             }
             
-            /* Make sure inner flexbox alignments built into SurveyJS elements do not force button to go to the right */
+            /* Make sure SurveyJS elements doesn't force box to right */
             .sv-footer__right, .sv-action-bar--right {
                 float: none !important;
                 margin: 0 auto !important;
@@ -123,7 +123,7 @@ var leisure_survey_page = {
         var desc = document.createElement("p");
         desc.id = "leisure-desc";
         desc.style.cssText = "font-size:1em; font-weight:normal; margin: 15px 20px; line-height: 1.5; text-align: left;";
-        desc.innerHTML = "<b>Instructions:</b> Please rate the following leisure activities and hobbies below, based on how enjoyable or unenjoyable you find them. Some of these activities may not exactly match your preferences, but please try to rate based on how close it is to one of your preferred activities (For example: if you like card games/tabletop games/tile games, then you should rate the 'Play board games with friends' option highly).";
+        desc.innerHTML = "<b>Instructions:</b> Please rate the following leisure activities and hobbies below, based on how enjoyable or unenjoyable you find them. Some of these activities may not exactly match your preferences, but please try to rate based on how close it is to one of your preferred activities (For example: if you like card games/tabletop games/tile games, then you should rate the 'Play board games with friends' option highly). To rate an item as Neutral (0), simply click directly on the middle indicator.";
         title_el.parentNode.insertBefore(desc, title_el.nextSibling);
       }
     
@@ -191,8 +191,8 @@ var leisure_survey_page = {
       // Watch the sliders to see when ptp moves them
       sliders.forEach(function(slider, index) { 
           slider.setAttribute("data-slider-idx", index); 
-          slider.addEventListener("input", function(e) { 
-              var idx = e.target.getAttribute("data-slider-idx"); 
+          function registerInteraction(e) { 
+              var idx = e.currentTarget.getAttribute("data-slider-idx"); 
               interacted_sliders.add(idx); 
               
               // If every single slider has been moved, unlock the button and allow form completion
@@ -204,7 +204,16 @@ var leisure_survey_page = {
                       submit_btn.classList.add("btn-unlocked"); 
                   } // closes if (submit_btn)
               } // closes if (interacted_sliders.size...)
-          }); // closes addEventListener
+          } // Closes registerInteraction
+          // Listen for slider value changes (dragging slider)
+          slider.addEventListener("input", registerInteraction);
+          slider.addEventListener("change", registerInteraction);
+
+          // Listen for clicks/touches on slider (even if value doesn't change and stays at true neutral)
+          slider.addEventListener("pointerdown", registerInteraction);
+          slider.addEventListener("mousedown", registerInteraction);
+          slider.addEventListener("touchstart", registerInteraction);
+          slider.addEventListener("click", registerInteraction);
       }); // closes sliders.forEach
     }, 100); // closes setTimeout; small delay, should let Knockout finish rendering
   } // closes on_load: function()
@@ -237,7 +246,7 @@ var math_survey_page = {
                 var desc = document.createElement("p"); 
                 desc.id = "math-desc"; 
                 desc.style.cssText = "font-size:1em; font-weight:normal; margin: 15px 20px; line-height: 1.5; text-align: left;"; 
-                desc.innerHTML = "<b>Instructions:</b> Please rate the following math activities below, based on how enjoyable or unenjoyable you find them."; 
+                desc.innerHTML = "<b>Instructions:</b> Please rate the following math activities below, based on how enjoyable or unenjoyable you find them. To rate an item as Neutral (0), simply click directly on the middle indicator."; 
                 title_el.parentNode.insertBefore(desc, title_el.nextSibling); 
             } 
 
@@ -303,26 +312,35 @@ var math_survey_page = {
                 }, true); 
             } 
 
-            // Watch the sliders to see when the ptp moves them 
+            // Watch the sliders to see when ptp moves them
             sliders.forEach(function(slider, index) { 
                 slider.setAttribute("data-slider-idx", index); 
-                slider.addEventListener("input", function(e) { 
-                    var idx = e.target.getAttribute("data-slider-idx"); 
+                function registerInteraction(e) { 
+                    var idx = e.currentTarget.getAttribute("data-slider-idx"); 
                     interacted_sliders.add(idx); 
-
-                    // If every single slider has been moved, unlock the page 
+                    
+                    // If every single slider has been moved, unlock the button and allow form completion
                     if (interacted_sliders.size === total_sliders) { 
                         forms_completed = true; 
                         if (submit_btn) { 
-                            // Change the button color from grey to blue 
-                            submit_btn.classList.remove("btn-locked"); 
+                            // Change the button color from grey to blue
+                            submit_btn.classList.remove("btn-locked");
                             submit_btn.classList.add("btn-unlocked"); 
-                        } 
-                    } 
-                }); // closes addEventListener 
-            }); // closes sliders.forEach 
-        }, 100); // closes setTimeout; small delay, should let Knockout finish rendering 
-    } // closes on_load: function() 
+                        } // closes if (submit_btn)
+                    } // closes if (interacted_sliders.size...)
+                } // Closes registerInteraction
+                // Listen for slider value changes (dragging slider)
+                slider.addEventListener("input", registerInteraction);
+                slider.addEventListener("change", registerInteraction);
+
+                // Listen for clicks/touches on slider (even if value doesn't change and stays at true neutral)
+                slider.addEventListener("pointerdown", registerInteraction);
+                slider.addEventListener("mousedown", registerInteraction);
+                slider.addEventListener("touchstart", registerInteraction);
+                slider.addEventListener("click", registerInteraction);
+      }); // closes sliders.forEach
+    }, 100); // closes setTimeout; small delay, should let Knockout finish rendering
+  } // closes on_load: function()
 }; // closes math_survey_page
 
 
@@ -408,10 +426,10 @@ var process_survey_data = {
 var choice_task_instructions = {
   type: jsPsychHtmlButtonResponse,
   choices: ['OK'],
-  stimulus: "<p><b>Instructions:</b> In this task, you will be presented with a choice between two options:</p>" +
+  stimulus: "<p><b>Instructions:</b> Suppose you are a student taking a math class. In this task, you will be presented with a series of hypothetical choices between two options: </p>" +
             "<p>           1) A <b>leisure activity</b> that you might find enjoyable on one side of the screen</p>" +
-            "<p>           2) A <b>math task</b> with a specific deadline and worth a percentage of your grade on the other side of the screen.</p>" +
-            "<p>For each choice, use your mouse to choose the <b>leisure activity</b> or the <b>math task</b>.</p>" +
+            "<p>           2) A <b>math task</b> for your math class, with a specific deadline and worth a percentage of your grade, on the other side of the screen.</p>" +
+            "<p>For each choice you make, use your mouse to select either the <b>leisure activity</b> or the <b>math task</b> to complete. Try to make choices based on what you would most likely do in real life.</p>" +
             "<p>If you understand these instructions, click <b>OK.</b></p>",
   allow_keys: false,
   post_trial_gap: 1000
@@ -448,9 +466,27 @@ var choice_task_timeline = {
         choice_task_timeline.current_right = shuffled_choices[1];
         return shuffled_choices;
     },
-    button_html: '<button class="jspsych-btn" style="width: 320px; min-height: 140px; margin: 20px; font-size: 18px; padding: 15px; white-space: normal;">%choice%</button>',
+    button_html: '<button class="jspsych-btn" style="width: 320px; min-height: 140px; margin: 20px; font-size: 18px; padding: 20px; white-space: normal; border-radius: 12px; border: 2px solid #000000; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); transition: all 0.2s ease; ">%choice%</button>',
     post_trial_gap: iti, // Blank intertrial interval presented after a trial
     on_load: function() {
+      // Button click effects
+      if (!document.getElementById("choice-btn-hover-styles")) {
+          var styleEl = document.createElement("style");
+          styleEl.id = "choice-btn-hover-styles";
+          styleEl.innerHTML = `
+            .jspsych-btn:hover { 
+              border-color: #000000 !important; /* Black border */
+              background-color: #f8fafc80 !important; /* Hover color change */
+              transform: translateY(-3px) !important; /* Box floating look */
+              box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1) !important; /* Box shadowing */
+            }
+            .jspsych-btn:active {
+              transform: translateY(1px) !important; /* Moves down when click */
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08) !important; /* Box shadowing */
+            }
+          `;
+          document.head.appendChild(styleEl);
+        }
       // Disabling buttons when loading up trial so can't register clicks at very beginning. Register clicks only after 1500 ms; block early clicks.
       // Display of buttons should still look same to ptp regardless of early/later time frame
       var display_element = jsPsych.getDisplayElement();
