@@ -12,6 +12,10 @@ var jsPsych = initJsPsych({
 
 /* Experiment parameters */
 var top_activities = []; // Will be populated in randomly during the experiment, after the survey
+
+var minimum_rt = 1500 // Defining RT min. Don't register button clicks until 1.5 secs after trial first presented, to prevent rapid button pressing/spamming
+var iti = 500 // Define intertrial interval for 500 ms
+
 var deadlines = ["4 hours", "12 hours", "1 day", "3 days", "1 week", "1 month"];
 
 var math_assignments = [
@@ -445,6 +449,20 @@ var choice_task_timeline = {
         return shuffled_choices; 
     },
     button_html: '<button class="jspsych-btn" style="width: 320px; min-height: 140px; margin: 20px; font-size: 18px; padding: 15px; white-space: normal;">%choice%</button>',
+    post_trial_gap: iti // Blank intertrial interval presented after a trial
+    on_load: function() {
+      // Disabling buttons when loading up trial so can't register clicks at very beginning
+      var btns = document.querySelectorAll('.jspsych-html-button-response-button button');
+      btns.forEach(function(btn) {
+        btn.setAttribute('disabled', 'disabled');
+      });
+      setTimeout(function() {
+        btns.forEach(function(btn) {
+          btn.removeAttribute('disabled');
+        });
+      }, MIN_RESPONSE_TIME_MS);
+    },
+
     data: { // Record data
       phase: '2afc_choice',
       leisure_option: function() { return jsPsych.timelineVariable('leisure', true); }, 
