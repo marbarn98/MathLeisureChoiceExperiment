@@ -92,6 +92,16 @@ var leisure_survey_page = {
             input[type='range'] { width: 100% !important; max-width: 500px !important; display: block !important; margin: 0 auto !important; }
             .slider-labels { display: flex !important; justify-content: space-between !important; font-size: 0.88em !important; color: #666 !important; margin: 8px auto 0 auto !important; width: 100% !important; max-width: 500px !important; padding: 0 4px !important; box-sizing: border-box !important; }
             
+            /* Make the slider circle button itself consistent across browsers. It looked different during piloting in Firefox than in other browsers; want consistency for ptps */
+            input[type='range']::-webkit-slider-thumb { 
+              appearance: none; width: 18px; height: 18px; border-radius: 50%;
+              background: #007bff; cursor: pointer;
+            }
+            input[type='range']::-moz-range-thumb { 
+              width: 18px; height: 18px; border-radius: 50%;
+              background: #007bff; border: none; cursor: pointer;
+            }
+
             /* Finish button centered */
             .sv-footer, .sv-action-bar, .sv_nav, .sv-footer__container, .sv-footer__right, .sv-action-bar--right { 
                 display: flex !important; 
