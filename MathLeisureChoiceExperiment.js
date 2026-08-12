@@ -449,7 +449,7 @@ var choice_task_timeline = {
         return shuffled_choices;
     },
     button_html: '<button class="jspsych-btn" style="width: 320px; min-height: 140px; margin: 20px; font-size: 18px; padding: 15px; white-space: normal;">%choice%</button>',
-    post_trial_gap: iti // Blank intertrial interval presented after a trial
+    post_trial_gap: iti, // Blank intertrial interval presented after a trial
     on_load: function() {
       // Disabling buttons when loading up trial so can't register clicks at very beginning
       var btns = document.querySelectorAll('.jspsych-html-button-response-button button');
