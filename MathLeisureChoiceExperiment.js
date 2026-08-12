@@ -451,16 +451,19 @@ var choice_task_timeline = {
     button_html: '<button class="jspsych-btn" style="width: 320px; min-height: 140px; margin: 20px; font-size: 18px; padding: 15px; white-space: normal;">%choice%</button>',
     post_trial_gap: iti, // Blank intertrial interval presented after a trial
     on_load: function() {
-      // Disabling buttons when loading up trial so can't register clicks at very beginning
-      var btns = document.querySelectorAll('.jspsych-html-button-response-button button');
-      btns.forEach(function(btn) {
-        btn.setAttribute('disabled', 'disabled');
-      });
-      setTimeout(function() {
-        btns.forEach(function(btn) {
-          btn.removeAttribute('disabled');
-        });
-      }, minimum_rt);
+      // Disabling buttons when loading up trial so can't register clicks at very beginning. Register clicks only after 1500 ms; block early clicks.
+      // Display of buttons should still look same to ptp regardless of early/later time frame
+      var display_element = jsPsych.getDisplayElement();
+      var trial_start = performance.now();
+      var blockEarlyClicks = function(e) {
+        if (performance.now() - trial_start < minimum_rt) {
+          e.stopPropagation();
+          e.preventDefault();
+        } else {
+          display_element.removeEventListener('click', blockEarlyClicks, true);
+        }
+      };
+      display_element.addEventListener('click', blockEarlyClicks, true); // true = capture phase
     },
 
     data: { // Record data
