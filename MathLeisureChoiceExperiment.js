@@ -51,7 +51,7 @@ var instructions = {
             "<p>Afterward, you will complete a decision task choosing between these alternatives.</p>" +
             "<p>If you understand these instructions, click <b>OK.</b></p>",
   allow_keys: false,
-  post_trial_gap: 1000
+  post_trial_gap: 1000 // Show quick blank screen before moving onto the first survey
 };
 
 /*Survey block - Part 1: Leisure Activities*/
@@ -60,6 +60,7 @@ var leisure_survey_page = {
   pages: [[{ type: "text", prompt: "placeholder", name: "placeholder" }]],
   title: "Part 1: Leisure Activities",
   show_question_numbers: "off",
+  post_trial_gap: 1000, // Show a quick blank screen before math_survey_page. Should visually divide the survey pages better
   on_start: function(trial) {
     var questions = leisure_activities.map(function(activity_string, index) {
       return {
@@ -136,24 +137,24 @@ var leisure_survey_page = {
         slider.setAttribute("value", "0");
         slider.value = "0";
 
-        // Make slider wider but still clean and usable
+        // Slider width/style
         slider.style.cssText = "width: 100%; max-width: 500px; display: block; margin: 0 auto;";
             
         // Make question text larger than slider labels
         var questionWrapper = slider.closest(".sv-question, .sv_q, .sv-row");
         if (questionWrapper) {
-            // Add some spacing between each separate activity question
+            // Add spacing between activity questions
             questionWrapper.style.paddingTop = "25px";
             questionWrapper.style.paddingBottom = "25px";
                 
-            // Increase font size of activity text
+            // Activity font size
             var questionTitle = questionWrapper.querySelector(".sv-question__title, .sv_q_title, h5, span");
             if (questionTitle) {
                 questionTitle.style.cssText = "font-size: 1.25em; font-weight: 600; color: #333; display: block; text-align: center; margin-bottom: 12px;";
             }
         }
         
-        // Add min/max labels under each slider (should match 500px slider max width)
+        // Add min/max labels under each slider
         if (!slider.nextSibling || !slider.nextSibling.classList || !slider.nextSibling.classList.contains("slider-labels")) {
           var labels = document.createElement("div");
           labels.className = "slider-labels";
@@ -225,6 +226,7 @@ var math_survey_page = {
     pages: [[{ type: "text", prompt: "placeholder", name: "placeholder" }]], 
     title: "Part 2: Math Activities", 
     show_question_numbers: "off", 
+    post_trial_gap: 1000, // Quick gap before moving onto choice task instrux page
     on_start: function(trial) { 
         var questions = math_assignments.map(function(math, index) { 
             return { 
@@ -265,18 +267,18 @@ var math_survey_page = {
                 // Make question text larger than slider labels 
                 var questionWrapper = slider.closest(".sv-question, .sv_q, .sv-row"); 
                 if (questionWrapper) { 
-                    // Add some spacing between each separate activity question
+                    // Add spacing between questions
                     questionWrapper.style.paddingTop = "25px"; 
                     questionWrapper.style.paddingBottom = "25px"; 
 
-                    // Increase font size of activity text 
+                    // Math task text font size
                     var questionTitle = questionWrapper.querySelector(".sv-question__title, .sv_q_title, h5, span"); 
                     if (questionTitle) { 
                         questionTitle.style.cssText = "font-size: 1.25em; font-weight: 600; color: #333; display: block; text-align: center; margin-bottom: 12px;"; 
                     } 
                 } 
 
-                // Add min/max labels under each slider (should match 500px slider max width)
+                // Add min/max labels under each slider
                 if (!slider.nextSibling || !slider.nextSibling.classList || !slider.nextSibling.classList.contains("slider-labels")) { 
                     var labels = document.createElement("div"); 
                     labels.className = "slider-labels"; 
@@ -426,13 +428,41 @@ var process_survey_data = {
 var choice_task_instructions = {
   type: jsPsychHtmlButtonResponse,
   choices: ['OK'],
-  stimulus: "<p><b>Instructions:</b> Suppose you are a student taking a math class. In this task, you will be presented with a series of hypothetical choices between two options: </p>" +
-            "<p>           1) A <b>leisure activity</b> that you might find enjoyable on one side of the screen</p>" +
-            "<p>           2) A <b>math task</b> for your math class, with a specific deadline and worth a percentage of your grade, on the other side of the screen.</p>" +
-            "<p>For each choice you make, use your mouse to select either the <b>leisure activity</b> or the <b>math task</b> to complete. Try to make choices based on what you would most likely do in real life.</p>" +
-            "<p>If you understand these instructions, click <b>OK.</b></p>",
-  allow_keys: false,
-  post_trial_gap: 1000
+  stimulus: 
+  var choice_task_instructions = {
+  type: jsPsychHtmlButtonResponse,
+  choices: ['OK'],
+  stimulus: `
+      <div style="max-width: 750px; margin: 0 auto; text-align: left; line-height: 1.6;">
+        <h2 style="text-align: center;">Instructions</h2>
+        
+        <p>
+          Suppose you are a student taking a math class. In this task, you will be presented with a series of hypothetical choices between two options:
+        </p>
+        
+        <ul style="margin: 15px 0 20px 20px;">
+          <li style="margin-bottom: 8px;">
+            A <b>leisure activity</b> that you might find enjoyable on one side of the screen.
+          </li>
+          <li style="margin-bottom: 8px;">
+            A <b>math task</b> for your math class, with a specific deadline and worth a percentage of your grade, on the other side of the screen.
+          </li>
+        </ul>
+        
+        <p>
+          For each choice you make, use your mouse to select either the <b>leisure activity</b> or the <b>math task</b> to complete. Try to make choices based on what you would most likely do in real life.
+        </p>
+        
+        <p style="text-align: center; margin-top: 25px;">
+          If you understand these instructions, click <b>OK</b>.
+        </p>
+      </div>
+    `,
+
+    button_html: '<button class="jspsych-btn">%choice%</button>',
+    allow_keys: false,
+    post_trial_gap: 1000
+  };
 };
 
 var choice_task_timeline = {
