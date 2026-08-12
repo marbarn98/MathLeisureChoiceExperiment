@@ -513,8 +513,10 @@ var choice_task_timeline = {
         display_element.appendChild(warningEl);
       } else {
         warningEl.style.visibility = "hidden";
+        warningEl.innerText = "You're answering too fast! Please read both options carefully before selecting.";
       }
-      // Warning message rendering (show up below the two choice boxes)
+
+      // Warning message rendering (show up below the two choice boxes). 
       if (btnGroup) {
         btnGroup.appendChild(warningEl);
       } else {
@@ -523,13 +525,20 @@ var choice_task_timeline = {
 
       // Disabling buttons when loading up trial so can't register clicks at very beginning. Register clicks only after 1500 ms; block early clicks.
       // Display of buttons should still look same to ptp regardless of early/later time frame
-      // Also should show warning associated with early clicking to deter behavior
-      var trial_start = performance.now();
+      // Also should show warning associated with early clicking to deter behavior.
+      // Reset answering penalty timer if they keep spamming the mouse
+      var last_early_click_time = performance.now();
+      var req_delay_time = minimum_rt; // Min RT delay time
+
       var handleEarlyClick = function(e) {
-        var elapsed = performance.now() - trial_start;
-        if (elapsed < minimum_rt) {
+        var now = performance.now();
+        // Check time since last early click
+        if (now - last_early_click_time < req_delay_time) {
           e.stopPropagation();
           e.preventDefault();
+
+          // Reset timer so 1.5s penalty wait restarts
+          last_early_click_time = now;
 
           // Show too-fast-warning, move/shake to get ptp's attention
           warningEl.style.visibility = "visible";
