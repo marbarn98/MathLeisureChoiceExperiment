@@ -466,7 +466,7 @@ var choice_task_timeline = {
         choice_task_timeline.current_right = shuffled_choices[1];
         return shuffled_choices;
     },
-    button_html: '<button class="jspsych-btn" style="width: 320px; min-height: 140px; margin: 20px; font-size: 18px; padding: 20px; white-space: normal; border-radius: 12px; border: 2px solid #000000; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); transition: all 0.2s ease; ">%choice%</button>',
+    button_html: '<button class="jspsych-btn" style="width: 320px; min-height: 140px; margin: 20px; font-size: 18px; padding: 20px; white-space: normal; border-radius: 12px; border: 2px solid hsl(0, 0%, 17%); box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); transition: all 0.2s ease; ">%choice%</button>',
     post_trial_gap: iti, // Blank intertrial interval presented after a trial
     on_load: function() {
       // Button click effects
@@ -475,10 +475,7 @@ var choice_task_timeline = {
           styleEl.id = "choice-btn-hover-styles";
           styleEl.innerHTML = `
             .jspsych-btn:hover { 
-              border-color: #000000 !important; /* Black border */
-              background-color: #f8fafc80 !important; /* Hover color change */
-              transform: translateY(-3px) !important; /* Box floating look */
-              box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1) !important; /* Box shadowing */
+              background-color: #f8fafc64 !important; /* Hover color change */
             }
             .jspsych-btn:active {
               transform: translateY(1px) !important; /* Moves down when click */
