@@ -447,7 +447,6 @@ var choice_task_timeline = {
         choice_task_timeline.current_left = shuffled_choices[0];
         choice_task_timeline.current_right = shuffled_choices[1];
         return shuffled_choices;
-      }
     },
     button_html: '<button class="jspsych-btn" style="width: 320px; min-height: 140px; margin: 20px; font-size: 18px; padding: 15px; white-space: normal;">%choice%</button>',
     post_trial_gap: iti // Blank intertrial interval presented after a trial
