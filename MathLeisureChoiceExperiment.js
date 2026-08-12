@@ -475,9 +475,10 @@ var choice_task_timeline = {
           styleEl.id = "choice-btn-hover-styles";
           styleEl.innerHTML = `
             .jspsych-btn:hover { 
-              background-color: #f8fafc64 !important; /* Hover color change */
+              background-color: #e0e0e0 !important; /* Hover color change */
             }
             .jspsych-btn:active {
+              background-color: #b0b0b0 !important;
               transform: translateY(1px) !important; /* Moves down when click */
               box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08) !important; /* Box shadowing */
             }
