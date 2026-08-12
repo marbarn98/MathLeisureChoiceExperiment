@@ -428,10 +428,6 @@ var process_survey_data = {
 var choice_task_instructions = {
   type: jsPsychHtmlButtonResponse,
   choices: ['OK'],
-  stimulus: 
-  var choice_task_instructions = {
-  type: jsPsychHtmlButtonResponse,
-  choices: ['OK'],
   stimulus: `
       <div style="max-width: 750px; margin: 0 auto; text-align: left; line-height: 1.6;">
         <h2 style="text-align: center;">Instructions</h2>
