@@ -49,18 +49,66 @@ Qualtrics.SurveyEngine.addOnload(function()
             var leisure_survey_trial = mydata.filter(function(trial) { return trial.phase === 'survey_rating_leisure'; });
             var leisure_responses = leisure_survey_trial.length > 0 ? leisure_survey_trial[0].response : {};
 
-            var leisure_ratings = leisure_activities_ordered.map(function(activity, index) {
+            var leisure_ratings_arr = leisure_activities_ordered.map(function(activity, index) {
                 var key = "leisure_" + index;
                 return leisure_responses[key] !== undefined ? leisure_responses[key] : '';
-            }).toString();
+            });
+
+            var leisure_ratings = leisure_ratings_arr.toString(); // Convert leisure ratings from an array (so other leisure rating variables can be calculated from raw data) into a string, to then get saved/embedded into Qualtrics output
+
+
+
+            // Flag/check leisure ratings data for overly consistent ratings, and for people who rated everything at neutral/ceiling/floor
+            // Only will use numeric responses, not blanks
+            var leisure_ratings_numeric = leisure_ratings_arr.filter(function(v) {
+                return v !== '' && !isNaN(v);
+            }).map(Number);
+
+            var n_leisure_rated = leisure_ratings_numeric.length;
+
+            var leisure_ratings_mean = n_leisure_rated > 0
+                ? leisure_ratings_numeric.reduce(function(a, b) { return a + b; }, 0) / n_leisure_rated
+                : NaN;
+
+            // Flag for when ptp doesn't show much variability between ratings for different leisure activities
+            var leisure_ratings_sd = n_leisure_rated > 0
+                ? Math.sqrt(leisure_ratings_numeric.reduce(function(sum, v) {
+                    return sum + Math.pow(v - leisure_ratings_mean, 2);
+                }, 0) / n_leisure_rated)
+                : NaN;
+
+            var leisure_ratings_min = n_leisure_rated > 0 ? Math.min.apply(null, leisure_ratings_numeric) : NaN;
+            var leisure_ratings_max = n_leisure_rated > 0 ? Math.max.apply(null, leisure_ratings_numeric) : NaN;
+            // Flag for when ptp only moves sliders around a little bit; little difference between their min and max ratings
+            var leisure_ratings_range = n_leisure_rated > 0 ? (leisure_ratings_max - leisure_ratings_min) : NaN; 
+
+            // Flag for when ptp rates every leisure activity identically 
+            var flag_identical_ratings = n_leisure_rated > 0 && leisure_ratings_sd === 0 ? 1 : 0;
+            
+            // Flag/check for if ptp shows low variability in ratings on leisure activities
+            var low_variance_sd_cutoff = 1; // Abritrary and adjustable cutoff value for low SDs, aka, potentially too-consistent responses
+            var flag_low_variance = n_leisure_rated > 0 && leisure_ratings_sd < low_variance_sd_cutoff ? 1 : 0;
+
+            // Flag if all ptp's ratings are neutral/0
+            var flag_all_neutral = n_leisure_rated > 0 && leisure_ratings_numeric.every(function(v) { return v === 0; }) ? 1 : 0;
+
+            // Flag if all ptp's ratings are extreme (aka, all near or at ceiling/floor). Ptp is rating every activity as highly enjoyable/unenjoyable
+            var flag_all_extreme = n_leisure_rated > 0 && (
+                leisure_ratings_numeric.every(function(v) { return v >= 4; }) ||
+                leisure_ratings_numeric.every(function(v) { return v <= -4; })
+            ) ? 1 : 0;
+
+            // Count the number of ratings made that are enjoyable (>0). Use as a check to ensure ptps are ranking at least 6 activities subjectively enjoyable, in order for the task to be effective for them.
+            var n_activities_rated_enjoyable = leisure_ratings_numeric.filter(function(v) { return v > 0; }).length;
+
 
 
             // Math activity ratings
             // Pulled in order from math_assignments array in MathLeisureChoiceExperiment.js
             var math_assignments_ordered = [
-                "Work on a math assignment",  // index 0
-                "Study for a math quiz",      // index 1
-                "Study for a math test",      // index 2
+                "Work on a math assignment", // index 0
+                "Study for a math quiz", // index 1
+                "Study for a math test", // index 2
                 "Study for a major math exam" // index 3
             ];
 
@@ -73,10 +121,12 @@ Qualtrics.SurveyEngine.addOnload(function()
             }).toString();
 
 
+
             // Top 6 leisure activities rankings
             // Read in participant's top 6 rankings from jsPsych data property written by process_survey_data block in MathLeisureChoiceExperiment.js
             var process_trial = mydata.filter(function(trial) { return trial.top_activities; });
             var top_6 = process_trial.length > 0 ? process_trial[0].top_activities : [];
+
 
 
             // Choice task trial-level data 
@@ -116,7 +166,6 @@ Qualtrics.SurveyEngine.addOnload(function()
             // What category was chosen: 'leisure' or 'math'
             var choice_category = choice_trials.map(function(t) { return t.choice_category; }).toString();
 
-        
             // Summary stats
             var total_trials = choice_trials.length;
 
@@ -160,10 +209,16 @@ Qualtrics.SurveyEngine.addOnload(function()
             
             
             
-
             // Saving everything as Qualtrics embedded data
             // Survey ratings
             Qualtrics.SurveyEngine.setJSEmbeddedData('leisure_ratings', leisure_ratings);
+            Qualtrics.SurveyEngine.setJSEmbeddedData('leisure_ratings_sd', isNaN(leisure_ratings_sd) ? '' : leisure_ratings_sd.toFixed(4));
+            Qualtrics.SurveyEngine.setJSEmbeddedData('leisure_ratings_range', isNaN(leisure_ratings_range) ? '' : leisure_ratings_range);
+            Qualtrics.SurveyEngine.setJSEmbeddedData('flag_identical_ratings', flag_identical_ratings);
+            Qualtrics.SurveyEngine.setJSEmbeddedData('flag_low_variance', flag_low_variance);
+            Qualtrics.SurveyEngine.setJSEmbeddedData('flag_all_neutral', flag_all_neutral);
+            Qualtrics.SurveyEngine.setJSEmbeddedData('flag_all_extreme', flag_all_extreme);
+            Qualtrics.SurveyEngine.setJSEmbeddedData('n_activities_rated_enjoyable', n_activities_rated_enjoyable);
             Qualtrics.SurveyEngine.setJSEmbeddedData('math_ratings', math_ratings);
 
             // Top 6 leisure activities (separate variables, ranked 1st to 6th)
