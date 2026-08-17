@@ -99,7 +99,7 @@ Qualtrics.SurveyEngine.addOnload(function()
             ) ? 1 : 0;
 
             // Count the number of ratings made that are enjoyable (>0). Use as a check to ensure ptps are ranking at least 6 activities subjectively enjoyable, in order for the task to be effective for them.
-            var n_activities_rated_enjoyable = leisure_ratings_numeric.filter(function(v) { return v > 0; }).length;
+            var num_activities_rated_enjoyable = leisure_ratings_numeric.filter(function(v) { return v > 0; }).length;
 
 
 
@@ -218,7 +218,7 @@ Qualtrics.SurveyEngine.addOnload(function()
             Qualtrics.SurveyEngine.setJSEmbeddedData('flag_low_variance', flag_low_variance);
             Qualtrics.SurveyEngine.setJSEmbeddedData('flag_all_neutral', flag_all_neutral);
             Qualtrics.SurveyEngine.setJSEmbeddedData('flag_all_extreme', flag_all_extreme);
-            Qualtrics.SurveyEngine.setJSEmbeddedData('n_activities_rated_enjoyable', n_activities_rated_enjoyable);
+            Qualtrics.SurveyEngine.setJSEmbeddedData('num_activities_rated_enjoyable', num_activities_rated_enjoyable);
             Qualtrics.SurveyEngine.setJSEmbeddedData('math_ratings', math_ratings);
 
             // Top 6 leisure activities (separate variables, ranked 1st to 6th)
