@@ -37,13 +37,13 @@ var leisure_activities = [
   "Organize your room", "Practice an instrument", "Go on a date"
 ];
 
-/*Set up Welcome block*/
+/* Set up Welcome block */
 var welcome = {
   type: jsPsychHtmlKeyboardResponse,
   stimulus: "Welcome to the experiment. Press any key to begin."
 };
 
-/*Set up Instructions block*/
+/* Set up Instructions block */
 var instructions = {
   type: jsPsychHtmlButtonResponse,
   choices: ['OK'],
@@ -54,7 +54,7 @@ var instructions = {
   post_trial_gap: 500 // Show quick blank screen before moving onto the first survey
 };
 
-/*Survey block - Part 1: Leisure Activities*/
+/* Survey block - Part 1: Leisure Activities */
 var leisure_survey_page = {
   type: jsPsychSurvey,
   pages: [[{ type: "text", prompt: "placeholder", name: "placeholder" }]],
@@ -230,7 +230,7 @@ var leisure_survey_page = {
   } // closes on_load: function()
 }; // closes leisure_survey_page
 
-/*Survey block - Part 2: Math Tasks*/
+/* Survey block - Part 2: Math Tasks */
 var math_survey_page = { 
     type: jsPsychSurvey, 
     pages: [[{ type: "text", prompt: "placeholder", name: "placeholder" }]], 
@@ -356,7 +356,7 @@ var math_survey_page = {
 }; // closes math_survey_page
 
 
-/*Data processing for leisure activities and trial combination generation*/
+/* Data processing for leisure activities and trial combination generation */
 var process_survey_data = {
   type: jsPsychCallFunction,
   func: function() {
@@ -434,7 +434,7 @@ var process_survey_data = {
   }
 };
 
-/*Dynamic Choice Task: Presents combos of different math tasks with leisure options that are most subjectively enjoyable to participant, based on their survey ratings*/
+/* Dynamic Choice Task: Presents combos of different math tasks with leisure options that are most subjectively enjoyable to participant, based on their survey ratings */
 var choice_task_instructions = {
   type: jsPsychHtmlButtonResponse,
   choices: ['OK'],
@@ -624,15 +624,16 @@ var choice_task_timeline = {
   timeline_variables: []
 };
 
-/*Debrief/Thank You page*/
+/* Debrief/Thank You page */
 var debrief = {
-  type: jsPsychHtmlKeyboardResponse,
+  type: jsPsychHtmlButtonResponse,
   choices: ['OK'],
-  stimulus: "<p>Thank you for completing this part of the experiment. Click <b>OK</b> to be redirected for Sona crediting.</p>",
-  post_trial_gap: 500
+  stimulus: "<p>Thank you for completing this part of the experiment. Click <b>OK</b> to go to the next page, which will then redirect you for Sona crediting.</p>",
+  allow_keys: false,
+  post_trial_gap: 500 // Quick blank screen before closing iframe and going back to fully Qualtrics
 };
 
-/*Experiment timeline setup*/
+/* Experiment timeline setup */
 var timeline = [];
 timeline.push(welcome); // Present welcome
 timeline.push(instructions); // Present instructions
@@ -646,5 +647,5 @@ timeline.push(process_survey_data);  // Process top_activities from survey data
 // timeline.push(debrief); // Present debrief/thank you page
 
 /* Remove comment notation below if want to run in browser */
-/*start experiment*/
+/* Start experiment */
 jsPsych.run(timeline);
